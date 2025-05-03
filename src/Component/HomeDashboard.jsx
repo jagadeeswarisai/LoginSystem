@@ -98,7 +98,8 @@ function HomeDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 overflow-y-auto">
+      <main className="ml-64 p-6 overflow-y-auto w-full">
+
         <Outlet />
       </main>
     </div>

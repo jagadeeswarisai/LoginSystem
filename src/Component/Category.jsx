@@ -31,6 +31,7 @@ const Category = () => {
       });
   }, []);
 
+  // Handle add or edit category
   const handleAddOrEditCategory = (e) => {
     e.preventDefault();
 
@@ -65,7 +66,7 @@ const Category = () => {
     }
   };
 
-  // Handle delete
+  // Handle delete category
   const handleDelete = (id) => {
     axios
       .delete(`http://localhost:5000/api/categories/${id}`)
@@ -193,7 +194,7 @@ const Category = () => {
           <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
             <tr>
               <th className="px-6 py-3">Image</th>
-              <th className="px-6 py-3">Name</th>
+              <th className="px-6 py-3">CategoryName</th>
               <th className="px-6 py-3">Description</th>
               <th className="px-6 py-3 text-center">Actions</th>
             </tr>

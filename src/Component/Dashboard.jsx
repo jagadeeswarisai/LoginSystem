@@ -11,7 +11,7 @@ function Dashboard() {
     setShowLogin(false);
   };
 
-  const handleSwitchToLogin = () => {
+  const handleSwitchToLogin = () => {o
     setShowLogin(true);
   };
 

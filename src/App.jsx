@@ -12,8 +12,9 @@ import Offers from "./Offers";
 import AdminLogin from "./Component/AdminLogin";
 import AdminHomepage from "./Component/AdminHomepage";
 import Category from "./Component/Category";
-import Productlist from "./Component/Productlist";
 import ErrorBoundary from "./Component/ErrorBoundary";
+import Productlist from "./Component/Productlist";
+
 
 
 function App() {
@@ -27,20 +28,22 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin-login" element={<AdminLogin />} />
 
-          {/* Admin routes */}
           <Route path="/adminhome" element={<AdminHomepage />}>
-            {/* Wrap Category route with ErrorBoundary */}
-            <Route
-              path="category"
-              element={
-                <ErrorBoundary>
-                  <Category />
-                </ErrorBoundary>
-              }
-            />
-            <Route path="product-list" element={<Productlist />} />
-            {/* If you have other admin routes, add them here */}
-          </Route>
+
+  <Route
+    path="category"
+    element={
+      <ErrorBoundary>
+        <Category />
+      </ErrorBoundary>
+    }
+  />
+  <Route path="product-list" element={<Productlist/>}/>
+  
+  
+  
+</Route>
+
 
           {/* Home Dashboard with nested routes */}
           <Route path="/homedashboard" element={<HomeDashboard />}>
