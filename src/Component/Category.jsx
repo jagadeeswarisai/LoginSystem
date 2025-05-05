@@ -3,110 +3,93 @@ import axios from "axios";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState({
+  const [form, setForm] = useState({
     name: "",
     description: "",
     image: null,
   });
-  const [imageUrl, setImageUrl] = useState("");
+  const [preview, setPreview] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Fetch categories from backend
-  useEffect(() => {
+  const fetchCategories = () => {
     axios
       .get("http://localhost:5000/api/categories")
-      .then((response) => {
-        console.log("Categories data:", response.data);
-        if (Array.isArray(response.data.data)) {
-          setCategories(response.data.data);
-        } else {
-          console.error("Categories data is not an array.");
-          setCategories([]);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
+      .then((res) => setCategories(res.data))
+      .catch((err) => console.error("Fetch error:", err));
+  };
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
-  // Handle add or edit category
-  const handleAddOrEditCategory = (e) => {
-    e.preventDefault();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-    const categoryData = {
-      name: newCategory.name,
-      description: newCategory.description,
-      image_url: imageUrl,
-    };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm((prev) => ({ ...prev, image: file }));
 
-    if (isEditing) {
-      // Update category
-      axios
-        .put(`http://localhost:5000/api/categories/${editingCategory._id}`, categoryData)
-        .then(() => {
-          setCategories((prev) =>
-            prev.map((cat) =>
-              cat._id === editingCategory._id ? { ...cat, ...categoryData } : cat
-            )
-          );
-          resetForm();
-        })
-        .catch((error) => console.error("Edit error:", error));
-    } else {
-      // Add new category
-      axios
-        .post("http://localhost:5000/api/categories", categoryData)
-        .then((response) => {
-          setCategories([...categories, response.data.category]);
-          resetForm();
-        })
-        .catch((error) => console.error("Add error:", error));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  // Handle delete category
+  const resetForm = () => {
+    setForm({ name: "", description: "", image: null });
+    setPreview("");
+    setIsEditing(false);
+    setEditingId(null);
+    setShowModal(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("description", form.description);
+    if (form.image && typeof form.image !== "string") {
+      formData.append("image", form.image);
+    }
+
+    const url = isEditing
+      ? `http://localhost:5000/api/categories/${editingId}`
+      : "http://localhost:5000/api/categories";
+    const method = isEditing ? axios.put : axios.post;
+
+    method(url, formData)
+      .then(() => {
+        fetchCategories();
+        resetForm();
+      })
+      .catch((err) => console.error("Save error:", err));
+  };
+
+  const handleEdit = (cat) => {
+    setIsEditing(true);
+    setEditingId(cat._id);
+    setForm({
+      name: cat.name,
+      description: cat.description,
+      image: "",
+    });
+    setPreview(`http://localhost:5000/uploads/${cat.image}`);
+    setShowModal(true);
+  };
+
   const handleDelete = (id) => {
     axios
       .delete(`http://localhost:5000/api/categories/${id}`)
-      .then(() => {
-        setCategories(categories.filter((category) => category._id !== id));
-      })
-      .catch((error) => console.error("Delete error:", error));
-  };
-
-  // Reset form for adding/editing categories
-  const resetForm = () => {
-    setShowModal(false);
-    setIsEditing(false);
-    setEditingCategory(null);
-    setNewCategory({ name: "", description: "", image: null });
-    setImageUrl("");
-  };
-
-  // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewCategory((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Handle image upload
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setNewCategory((prev) => ({ ...prev, image: file }));
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    axios
-      .post("http://localhost:5000/api/upload", formData)
-      .then((response) => {
-        setImageUrl(response.data.image_url);
-      })
-      .catch((error) => {
-        console.error("Image upload error:", error);
-      });
+      .then(() => fetchCategories())
+      .catch((err) => console.error("Delete error:", err));
   };
 
   return (
@@ -120,67 +103,67 @@ const Category = () => {
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow"
         >
-          Add New Category
+          Add Category
         </button>
       </div>
 
-      {/* Modal for adding/editing category */}
+      {/* Modal Form */}
       {showModal && (
-        <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
             <h2 className="text-xl font-semibold mb-4">
-              {isEditing ? "Edit" : "Add"} Category
+              {isEditing ? "Edit Category" : "Add Category"}
             </h2>
-            <form onSubmit={handleAddOrEditCategory} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block font-medium mb-1">Name</label>
                 <input
-                  type="text"
                   name="name"
-                  value={newCategory.name}
+                  value={form.name}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-400"
                   required
+                  className="w-full border p-2 rounded"
                 />
               </div>
               <div>
                 <label className="block font-medium mb-1">Description</label>
                 <textarea
                   name="description"
-                  value={newCategory.description}
+                  value={form.description}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-400"
                   required
-                ></textarea>
+                  className="w-full border p-2 rounded"
+                />
               </div>
               <div>
                 <label className="block font-medium mb-1">Image</label>
                 <input
                   type="file"
                   onChange={handleImageChange}
-                  className="w-full border border-gray-300 p-2 rounded"
+                  accept="image/*"
+                  className="w-full border p-2 rounded"
                 />
-                {imageUrl && (
+                {preview && (
                   <img
-                    src={`http://localhost:5000/${imageUrl}`}
+                    src={preview}
                     alt="Preview"
-                    className="mt-4 w-32 h-32 object-cover rounded border"
+                    className="mt-2 w-32 h-32 object-cover rounded border"
                   />
                 )}
               </div>
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-4">
                 <button
                   type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold"
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                 >
                   {isEditing ? "Update" : "Add"}
                 </button>
                 <button
                   type="button"
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-semibold"
                   onClick={resetForm}
+                  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
                 >
-                  Close
+                  Cancel
                 </button>
               </div>
             </form>
@@ -188,50 +171,40 @@ const Category = () => {
         </div>
       )}
 
-      {/* Table to display categories */}
-      <div className="overflow-x-auto bg-white shadow-md rounded-xl">
-        <table className="min-w-full text-sm text-left text-gray-700">
+      {/* Table */}
+      <div className="overflow-x-auto mt-8 bg-white shadow rounded-lg">
+        <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
             <tr>
               <th className="px-6 py-3">Image</th>
-              <th className="px-6 py-3">CategoryName</th>
+              <th className="px-6 py-3">Name</th>
               <th className="px-6 py-3">Description</th>
               <th className="px-6 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {categories.length > 0 ? (
-              categories.map((category) => (
-                <tr key={category._id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4">
+              categories.map((cat) => (
+                <tr key={cat._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-3">
                     <img
-                      src={`http://localhost:5000/${category.image_url}`}
-                      alt={category.name}
-                      className="w-16 h-16 object-cover rounded border"
+                      src={`http://localhost:5000/uploads/${cat.image}`}
+                      alt={cat.name}
+                      className="w-16 h-16 object-cover rounded"
                     />
                   </td>
-                  <td className="px-6 py-4 font-medium">{category.name}</td>
-                  <td className="px-6 py-4">{category.description}</td>
-                  <td className="px-6 py-4 text-center space-x-2">
+                  <td className="px-6 py-3 font-medium">{cat.name}</td>
+                  <td className="px-6 py-3">{cat.description}</td>
+                  <td className="px-6 py-3 text-center space-x-2">
                     <button
-                      onClick={() => {
-                        setIsEditing(true);
-                        setEditingCategory(category);
-                        setNewCategory({
-                          name: category.name,
-                          description: category.description,
-                          image: category.image_url,
-                        });
-                        setImageUrl(category.image_url);
-                        setShowModal(true);
-                      }}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded text-xs font-semibold"
+                      onClick={() => handleEdit(cat)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded text-xs hover:bg-yellow-600"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(category._id)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-xs font-semibold"
+                      onClick={() => handleDelete(cat._id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
                     >
                       Delete
                     </button>
@@ -240,8 +213,8 @@ const Category = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center px-6 py-4 text-gray-500">
-                  No categories available
+                <td colSpan="4" className="text-center py-4 text-gray-500">
+                  No categories found.
                 </td>
               </tr>
             )}
@@ -253,3 +226,4 @@ const Category = () => {
 };
 
 export default Category;
+

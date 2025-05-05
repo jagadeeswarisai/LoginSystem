@@ -4,58 +4,46 @@ import Dashboard from "./Component/Dashboard";
 import SignUp from "./Component/Signup";
 import Login from "./Component/Login";
 import HomeDashboard from "./Component/HomeDashboard";
-import Home from "./Component/Home";
-import About from "./About";
-import Contact from "./Contact";
-import Blog from "./Blog";
-import Offers from "./Offers";
 import AdminLogin from "./Component/AdminLogin";
 import AdminHomepage from "./Component/AdminHomepage";
 import Category from "./Component/Category";
 import ErrorBoundary from "./Component/ErrorBoundary";
 import Productlist from "./Component/Productlist";
-
-
+import Product from "./Product";
+import Layout from "./Component/Layout"; // ✅ Import Layout
+import ProductDetail from "./Component/ProductDeatil";
 
 function App() {
   return (
-    <div>
-      <BrowserRouter>
-        <Routes>
-          {/* Basic Routes */}
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
+    <BrowserRouter>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
 
-          <Route path="/adminhome" element={<AdminHomepage />}>
+        {/* Admin Routes with nested structure */}
+        <Route path="/adminhome" element={<AdminHomepage />}>
+          <Route
+            path="category"
+            element={
+              <ErrorBoundary>
+                <Category />
+              </ErrorBoundary>
+            }
+          />
+          <Route path="product-list" element={<Productlist />} />
+        </Route>
 
-  <Route
-    path="category"
-    element={
-      <ErrorBoundary>
-        <Category />
-      </ErrorBoundary>
-    }
-  />
-  <Route path="product-list" element={<Productlist/>}/>
-  
-  
-  
-</Route>
-
-
-          {/* Home Dashboard with nested routes */}
-          <Route path="/homedashboard" element={<HomeDashboard />}>
-            <Route path="home" element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="blog" element={<Blog />} />
-            <Route path="offers" element={<Offers />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+        {/* User Layout Routes */}
+        <Route path="/homedashboard" element={<Layout/>}>
+          <Route index element={<HomeDashboard />} />
+          <Route path="products" element={<Product />} />
+          <Route path="productdetail" element={<ProductDetail/>}/>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

@@ -58,7 +58,7 @@ function SignUp({ onSwitchToLogin }) {
       if (response.ok) {
         const data = await response.json();
         alert(data.message);
-        onSwitchToLogin();
+        onSwitchToLogin("/login");
       } else {
         const errorData = await response.json();
         setErrors({ general: errorData.message || "Signup failed. Please try again." });
