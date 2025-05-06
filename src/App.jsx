@@ -9,9 +9,15 @@ import AdminHomepage from "./Component/AdminHomepage";
 import Category from "./Component/Category";
 import ErrorBoundary from "./Component/ErrorBoundary";
 import Productlist from "./Component/Productlist";
-import Product from "./Product";
 import Layout from "./Component/Layout"; // ✅ Import Layout
-import ProductDetail from "./Component/ProductDeatil";
+import CategoryPage from "./CategoryPage";
+import PhoneDetailPage from "./PhoneDetailPage";
+import LaptopDetailPage from "./LaptopDetailPage";
+import TabletDetailPage from "./TabletDetailPage";
+import EarbutsDetailPage from "./EarbutsDetailPage";
+
+
+
 
 function App() {
   return (
@@ -37,10 +43,15 @@ function App() {
         </Route>
 
         {/* User Layout Routes */}
-        <Route path="/homedashboard" element={<Layout/>}>
+        <Route path="/homedashboard" element={<Layout />}>
           <Route index element={<HomeDashboard />} />
-          <Route path="products" element={<Product />} />
-          <Route path="productdetail" element={<ProductDetail/>}/>
+          <Route path="category/:categoryName" element={<CategoryPage />} />
+          <Route path="category/:categoryName" element={<PhoneDetailPage/>}/>
+          <Route path="category/:categoryName" element={<LaptopDetailPage/>}/>
+          <Route path="category/:categoryName" element={<TabletDetailPage/>}/>
+          <Route path="category/:categoryName" element={<EarbutsDetailPage/>}/>
+         
+
         </Route>
       </Routes>
     </BrowserRouter>

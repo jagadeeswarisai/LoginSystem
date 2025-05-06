@@ -1,43 +1,70 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // To handle navigation
+import axios from "axios";
 
-function HomeDashboard() {
+const HomeDashboard = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);  // Loading state
+  const [error, setError] = useState("");       // Error state
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data.data || []))
-      .catch((err) => console.error("Failed to fetch categories:", err));
+    axios
+      .get("http://localhost:5000/api/categories")  // Fetch categories from the backend
+      .then((res) => {
+        setCategories(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Error fetching categories");
+        setLoading(false);
+      });
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">
-        Shop by Categories
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {categories.map((cat) => (
-          <Link
-            key={cat._id}
-            to={`/category/${cat._id}`}
-            className="bg-white rounded-lg shadow hover:shadow-lg transition p-4 flex flex-col items-center"
-          >
-            {cat.image_url && (
+    <div className="container mx-auto px-4 py-0 bg-gray-50 min-h-screen mt-10">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2> {/* Change title to match watches */}
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        {categories.length > 0 ? (
+          categories.map((cat) => (
+            <Link
+              key={cat._id}
+              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
+              className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+            >
               <img
-                src={`http://localhost:5000/uploads/products/${cat.image_url}`}
+                src={cat.image ? `http://localhost:5000/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
                 alt={cat.name}
-                className="w-32 h-32 object-cover rounded mb-4"
+                className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
               />
-            )}
-            <h3 className="text-lg font-semibold text-gray-800">
-              {cat.name}
-            </h3>
-          </Link>
-        ))}
+              <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">
+                {cat.name}
+              </h2>
+              <p className="text-sm text-gray-600">{cat.description}</p>
+            </Link>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">No categories available.</p>
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default HomeDashboard;
