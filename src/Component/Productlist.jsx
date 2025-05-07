@@ -70,7 +70,7 @@ const ProductList = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 ">
       <button
         onClick={() => {
           setFormData({
@@ -81,33 +81,37 @@ const ProductList = () => {
           setEditId(null);
           setShowModal(true);
         }}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        className="bg-blue-600 text-white px-4 py-2 rounded transition-transform duration-300 hover:scale-105 hover:bg-blue-700 animate-fadeIn"
       >
         Add New Product
       </button>
-      <div className="mt-6">
-  <div className="overflow-x-auto rounded-lg border border-gray-200">
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-100">
+      <div className="mt-6 animate-fadeIn">
+ <div className="w-full overflow-auto rounded-xl border border-blue-200 shadow-lg transition-all duration-500 ease-in-out hover:shadow-xl">
+    <table className="min-w-[800px] w-full divide-y divide-gray-200 transition-transform duration-500 ease-in-out">
+      <thead className="bg-blue-100 uppercase text-xs sticky top-0 z-10">
         <tr>
           <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
           <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
-          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Description</th>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 ">Description</th>
           <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
           <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
           <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
           <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
         </tr>
       </thead>
-      <tbody className="divide-y divide-gray-100 bg-white">
-        {products.map(product => (
-          <tr key={product._id} className="hover:bg-gray-50 transition">
+      <tbody className="divide-y divide-blue-200 bg-white">
+        {products.map((product, index) => (
+          <tr
+            key={product._id}
+            className="hover:bg-gray-50 transition duration-300 ease-in-out animate-fadeIn"
+            style={{ animationDelay: `${index * 0.05}s`, animationFillMode: "forwards" }}
+          >
             <td className="px-4 py-2">
               {product.image && (
                 <img
                   src={`http://localhost:5000/uploads/${product.image}`}
                   alt={product.name}
-                  className="h-12 w-12 rounded object-cover"
+                  className="h-12 w-12 rounded-full object-cover transition-transform duration-300 hover:scale-110"
                 />
               )}
             </td>
@@ -119,13 +123,13 @@ const ProductList = () => {
             <td className="px-4 py-2">
               <button
                 onClick={() => handleEdit(product)}
-                className="bg-yellow-500 text-white px-3 py-1 text-xs rounded mr-2"
+                className="bg-yellow-500 text-white px-3 py-1 text-xs rounded mr-2 hover:bg-yellow-600 transition-colors duration-300"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(product._id)}
-                className="bg-red-600 text-white px-3 py-1 text-xs rounded"
+                className="bg-red-600 text-white px-3 py-1 text-xs rounded hover:bg-red-700 transition-colors duration-300"
               >
                 Delete
               </button>
@@ -136,7 +140,6 @@ const ProductList = () => {
     </table>
   </div>
 </div>
-
 
       {/* Modal */}
       {showModal && (

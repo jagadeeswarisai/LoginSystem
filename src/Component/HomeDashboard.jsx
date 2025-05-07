@@ -37,7 +37,7 @@ const HomeDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-0 bg-gray-50 min-h-screen mt-10">
+    <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen mt-10">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2> {/* Change title to match watches */}
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
@@ -56,7 +56,7 @@ const HomeDashboard = () => {
               <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">
                 {cat.name}
               </h2>
-              <p className="text-sm text-gray-600">{cat.description}</p>
+             
             </Link>
           ))
         ) : (
