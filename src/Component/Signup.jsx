@@ -24,7 +24,7 @@ function SignUp({ onSwitchToLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({});
+    setErrors({}); // Reset errors on every submit
     let validationErrors = {};
 
     // Form validation logic
@@ -38,13 +38,16 @@ function SignUp({ onSwitchToLogin }) {
     if (formData.password !== formData.confirmPassword) {
       validationErrors.passwordMatch = "Passwords do not match.";
     }
+
     if (formData.email !== formData.confirmEmail) {
       validationErrors.emailMatch = "Emails do not match.";
     }
+
     if (formData.email && !validateEmail(formData.email)) {
       validationErrors.emailFormat = "Please enter a valid email address.";
     }
 
+    // Stop form submission if there are validation errors
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
