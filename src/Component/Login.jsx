@@ -1,3 +1,4 @@
+// src/Component/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -5,12 +6,10 @@ function Login({ onSwitchToSignUp }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // For loading state
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);  // Set loading to true when request is sent
 
     const response = await fetch("https://loginsystembackend-z5yb.onrender.com/login", {
       method: "POST",
@@ -21,11 +20,10 @@ function Login({ onSwitchToSignUp }) {
     });
 
     const data = await response.json();
-    setIsLoading(false); // Set loading to false after response is received
 
     if (response.status === 200) {
       setMessage("Login successful!");
-      alert("Login successful");
+      alert("login sucess");
       navigate("/homedashboard");
     } else {
       setMessage(data.message || "Login failed.");
@@ -33,7 +31,8 @@ function Login({ onSwitchToSignUp }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center 
+     to-white px-4">
       <div className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl border border-gray-200">
         <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Login</h2>
         
@@ -64,10 +63,9 @@ function Login({ onSwitchToSignUp }) {
           
           <button
             type="submit"
-            disabled={isLoading}  // Disable button while loading
-            className={`w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors font-semibold ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors font-semibold"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            Login
           </button>
         </form>
 
