@@ -55,32 +55,36 @@ function SignUp({ onSwitchToLogin }) {
 
     // Set loading state to true before making API call
     setIsLoading(true);
-
     try {
       const response = await fetch("https://loginsystembackend-z5yb.onrender.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+    
+      // Log status and response body
+      console.log("Response Status:", response.status);
+      const textResponse = await response.text(); // Get the response body as text first
+    
       if (response.ok) {
-        // If the response is successful (status 200-299)
-        const data = await response.json();
+        // Try parsing the response if it's successful
+        const data = JSON.parse(textResponse); // Manually parse if it's valid JSON
         alert(data.message); // Show the success message from the response
         onSwitchToLogin("/login");  // Switch to the login page after successful signup
       } else {
-        // If response status is not OK (e.g., 400 or 500)
-        const errorData = await response.json();
+        // Log the error response as text
+        console.error("Error response:", textResponse);
+        const errorData = JSON.parse(textResponse); // Attempt to parse the error response as JSON
         setErrors({ general: errorData.message || "Signup failed. Please try again." });
       }
     } catch (error) {
-      // Handle network errors, or other issues that occur in the try block
-      console.error("Request failed", error); // Log error to the console for debugging
+      // Handle network errors or any issues that occur during the fetch process
+      console.error("Request failed", error);
       setErrors({ general: "An error occurred. Please try again later." });
     } finally {
-      setIsLoading(false);  // Reset loading state after request is done (success or failure)
+      setIsLoading(false); // Reset loading state after request is done (success or failure)
     }
-  };
+  }    
 
   return (
     <div className="min-h-screen flex items-center justify-center via-white to-pink-100 px-4">
