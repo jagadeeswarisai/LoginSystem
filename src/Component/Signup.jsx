@@ -10,7 +10,6 @@ function SignUp({ onSwitchToLogin }) {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,10 +23,9 @@ function SignUp({ onSwitchToLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({}); // Reset errors on every submit
+    setErrors({});
     let validationErrors = {};
 
-    // Form validation logic
     if (!formData.firstName) validationErrors.firstName = "First Name is required.";
     if (!formData.lastName) validationErrors.lastName = "Last Name is required.";
     if (!formData.email) validationErrors.email = "Email is required.";
@@ -38,53 +36,37 @@ function SignUp({ onSwitchToLogin }) {
     if (formData.password !== formData.confirmPassword) {
       validationErrors.passwordMatch = "Passwords do not match.";
     }
-
     if (formData.email !== formData.confirmEmail) {
       validationErrors.emailMatch = "Emails do not match.";
     }
-
     if (formData.email && !validateEmail(formData.email)) {
       validationErrors.emailFormat = "Please enter a valid email address.";
     }
 
-    // Stop form submission if there are validation errors
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    // Set loading state to true before making API call
-    setIsLoading(true);
     try {
-      const response = await fetch("https://loginsystembackend-z5yb.onrender.com/signup", {
+      const response = await fetch("https://loginsystembackend-lg8s.onrender.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-    
-      // Log status and response body
-      console.log("Response Status:", response.status);
-      const textResponse = await response.text(); // Get the response body as text first
-    
+
       if (response.ok) {
-        // Try parsing the response if it's successful
-        const data = JSON.parse(textResponse); // Manually parse if it's valid JSON
-        alert(data.message); // Show the success message from the response
-        onSwitchToLogin("/login");  // Switch to the login page after successful signup
+        const data = await response.json();
+        alert(data.message);
+        onSwitchToLogin("/login");
       } else {
-        // Log the error response as text
-        console.error("Error response:", textResponse);
-        const errorData = JSON.parse(textResponse); // Attempt to parse the error response as JSON
+        const errorData = await response.json();
         setErrors({ general: errorData.message || "Signup failed. Please try again." });
       }
-    } catch (error) {
-      // Handle network errors or any issues that occur during the fetch process
-      console.error("Request failed", error);
+    } catch {
       setErrors({ general: "An error occurred. Please try again later." });
-    } finally {
-      setIsLoading(false); // Reset loading state after request is done (success or failure)
     }
-  }    
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center via-white to-pink-100 px-4">
@@ -180,9 +162,8 @@ function SignUp({ onSwitchToLogin }) {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold transition"
-            disabled={isLoading}  // Disable button while loading
           >
-            {isLoading ? "Signing Up..." : "Sign Up"}
+            Sign Up
           </button>
         </form>
 
