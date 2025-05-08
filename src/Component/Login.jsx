@@ -12,7 +12,7 @@ function Login({ onSwitchToSignUp }) {
     e.preventDefault();
     setIsLoading(true);  // Set loading to true when request is sent
 
-    const response = await fetch("http://localhost:5000/login", {
+    const response = await fetch("https://loginsystembackend-z5yb.onrender.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
