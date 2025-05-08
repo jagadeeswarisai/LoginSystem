@@ -10,6 +10,7 @@ function SignUp({ onSwitchToLogin }) {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,6 +27,7 @@ function SignUp({ onSwitchToLogin }) {
     setErrors({});
     let validationErrors = {};
 
+    // Form validation logic
     if (!formData.firstName) validationErrors.firstName = "First Name is required.";
     if (!formData.lastName) validationErrors.lastName = "Last Name is required.";
     if (!formData.email) validationErrors.email = "Email is required.";
@@ -48,6 +50,9 @@ function SignUp({ onSwitchToLogin }) {
       return;
     }
 
+    // Set loading state to true before making API call
+    setIsLoading(true);
+
     try {
       const response = await fetch("https://loginsystembackend-lg8s.onrender.com/signup", {
         method: "POST",
@@ -56,15 +61,21 @@ function SignUp({ onSwitchToLogin }) {
       });
 
       if (response.ok) {
+        // If the response is successful (status 200-299)
         const data = await response.json();
-        alert(data.message);
-        onSwitchToLogin("/login");
+        alert(data.message); // Show the success message from the response
+        onSwitchToLogin("/login");  // Switch to the login page after successful signup
       } else {
+        // If response status is not OK (e.g., 400 or 500)
         const errorData = await response.json();
         setErrors({ general: errorData.message || "Signup failed. Please try again." });
       }
-    } catch {
+    } catch (error) {
+      // Handle network errors, or other issues that occur in the try block
+      console.error("Request failed", error); // Log error to the console for debugging
       setErrors({ general: "An error occurred. Please try again later." });
+    } finally {
+      setIsLoading(false);  // Reset loading state after request is done (success or failure)
     }
   };
 
@@ -162,8 +173,9 @@ function SignUp({ onSwitchToLogin }) {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold transition"
+            disabled={isLoading}  // Disable button while loading
           >
-            Sign Up
+            {isLoading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 
