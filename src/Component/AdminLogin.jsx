@@ -9,7 +9,7 @@ const AdminLogin = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch("https://loginsystembackend-z5yb.onrender.com/admin-login", {
+      const response = await fetch("https://loginsystembackend-1.onrender.com/admin-login", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
