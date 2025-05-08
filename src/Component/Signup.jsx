@@ -49,7 +49,7 @@ function SignUp({ onSwitchToLogin }) {
     }
 
     try {
-      const response = await fetch("http://loginsystembackend-lg8s.onrender.com/signup", {
+      const response = await fetch("https://loginsystembackend-lg8s.onrender.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
