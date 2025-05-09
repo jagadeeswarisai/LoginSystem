@@ -13,12 +13,12 @@ const ProductList = () => {
   const [editId, setEditId] = useState(null);
 
   const fetchProducts = async () => {
-    const res = await axios.get('https://loginsystembackendcategories.onrender.com/api/products');
+    const res = await axios.get('http://localhost:5000/api/products');
     setProducts(res.data);
   };
 
   const fetchCategories = async () => {
-    const res = await axios.get('https://loginsystembackendcategories.onrender.com/api/categories');
+    const res = await axios.get('http://localhost:5000/api/categories');
     setCategories(res.data);
   };
 
@@ -45,9 +45,9 @@ const ProductList = () => {
 
     try {
       if (editId) {
-        await axios.put(`https://loginsystembackendcategories.onrender.com/api/products/${editId}`, data);
+        await axios.put(`http://localhost:5000/api/products/${editId}`, data);
       } else {
-        await axios.post('https://loginsystembackendcategories.onrender.com/api/products', data);
+        await axios.post('http://localhost:5000/api/products', data);
       }
       fetchProducts();
       setFormData({ name: '', description: '', price: '', height: '', weight: '', length: '', width: '', status: 'Available', tax: '', warehouseLocation: '', category: '', image: null });
@@ -65,7 +65,7 @@ const ProductList = () => {
   };
 
   const handleDelete = async id => {
-    await axios.delete(`https://loginsystembackendcategories.onrender.com/api/products/${id}`);
+    await axios.delete(`http://localhost:5000/api/products/${id}`);
     fetchProducts();
   };
 
@@ -109,7 +109,7 @@ const ProductList = () => {
             <td className="px-4 py-2">
               {product.image && (
                 <img
-                  src={`https://loginsystembackendcategories.onrender.com/uploads/${product.image}`}
+                  src={`http://localhost:5000/uploads/${product.image}`}
                   alt={product.name}
                   className="h-12 w-12 rounded-full object-cover transition-transform duration-300 hover:scale-110"
                 />
