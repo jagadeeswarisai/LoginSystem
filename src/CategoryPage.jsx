@@ -8,7 +8,7 @@ const CategoryPage = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/products?category=${categoryName}`)
+      .get(`https://loginsystembackendecommercesite.onrender.com/api/products?category=${categoryName}`)
       .then((res) => setProducts(res.data))
       .catch((err) => console.error("Error fetching products:", err));
   }, [categoryName]); // Fetch products whenever the category changes
@@ -22,7 +22,7 @@ const CategoryPage = () => {
     <Link to={`/homedashboard/product/${product._id}`} key={product._id}>
       <div className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
         <img
-          src={`http://localhost:5000/uploads/${product.image}`}
+          src={`https://loginsystembackendecommercesite.onrender.com/uploads/${product.image}`}
           alt={product.name}
           className="w-full h-40 object-cover rounded-lg mb-4"
         />

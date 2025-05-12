@@ -9,7 +9,7 @@ const HomeDashboard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/categories")  // Fetch categories from the backend
+      .get("https://loginsystembackendecommercesite.onrender.com/api/categories")  // Fetch categories from the backend
       .then((res) => {
         setCategories(res.data);
         setLoading(false);
@@ -49,7 +49,7 @@ const HomeDashboard = () => {
               className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
             >
               <img
-                src={cat.image ? `http://localhost:5000/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
+                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
                 alt={cat.name}
                 className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
               />

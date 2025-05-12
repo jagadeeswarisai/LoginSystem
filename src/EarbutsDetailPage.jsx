@@ -15,7 +15,7 @@ const EarbutsDetailPage = () => {
       setError(null);
 
       axios
-        .get(`http://localhost:5000/api/products?category=${categoryName}`)
+        .get(`https://loginsystembackendecommercesite.onrender.com/api/products?category=${categoryName}`)
         .then((res) => {
           setProducts(res.data);
           setLoading(false);
@@ -54,7 +54,7 @@ const EarbutsDetailPage = () => {
               className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
             >
               <img
-                src={product.image ? `http://localhost:5000/uploads/${product.image}` : "/default-image.jpg"}
+                src={product.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${product.image}` : "/default-image.jpg"}
                 alt={product.name}
                 className="w-full h-40 object-cover rounded-lg mb-4"
               />

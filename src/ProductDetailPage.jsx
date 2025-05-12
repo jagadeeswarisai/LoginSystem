@@ -8,7 +8,7 @@ const ProductDetailPage = () => {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5000/api/products/${productId}`)
+            .get(`https://loginsystembackendecommercesite.onrender.com/api/products/${productId}`)
             .then((res) => setProduct(res.data))
             .catch((err) => {
                 console.error("Error fetching product details:", err);
@@ -30,7 +30,7 @@ const ProductDetailPage = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                     <div className="md:w-1/2">
                        <img
-  src={`http://localhost:5000/uploads/${product.image}`}
+  src={`https://loginsystembackendecommercesite.onrender.com/uploads/${product.image}`}
   alt={product.name}
   className="w-[400px] h-[400px] object-cover rounded-full mb-6 transition-transform duration-300 hover:scale-105 animate-scaleUp"
 />
