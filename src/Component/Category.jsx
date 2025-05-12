@@ -15,7 +15,7 @@ const Category = () => {
 
   const fetchCategories = () => {
     axios
-      .get("http://localhost:5000/api/categories")
+      .get("https://loginsystembackendcategories.onrender.com/categories")
       .then((res) => setCategories(res.data))
       .catch((err) => console.error("Fetch error:", err));
   };
@@ -61,8 +61,8 @@ const Category = () => {
     }
 
     const url = isEditing
-      ? `http://localhost:5000/api/categories/${editingId}`
-      : "http://localhost:5000/api/categories";
+      ? `https://loginsystembackendcategories.onrender.com/api/categories/${editingId}`
+      : "https://loginsystembackendcategories.onrender.com/api/categories";
     const method = isEditing ? axios.put : axios.post;
 
     method(url, formData)
@@ -81,13 +81,13 @@ const Category = () => {
       description: cat.description,
       image: "",
     });
-    setPreview(`http://localhost:5000/uploads/${cat.image}`);
+    setPreview(`https://loginsystembackendcategories.onrender.com/uploads/${cat.image}`);
     setShowModal(true);
   };
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/categories/${id}`)
+      .delete(`https://loginsystembackendcategories.onrender.com/api/categories/${id}`)
       .then(() => fetchCategories())
       .catch((err) => console.error("Delete error:", err));
   };
@@ -194,7 +194,7 @@ const Category = () => {
               >
                 <td className="px-6 py-3">
                   <img
-                    src={`http://localhost:5000/uploads/${cat.image}`}
+                    src={`https://loginsystembackendcategories.onrender.com/uploads/${cat.image}`}
                     alt={cat.name}
                     className="w-16 h-16 object-cover rounded-lg shadow"
                   />
