@@ -73,17 +73,17 @@ const Category = () => {
       .catch((err) => console.error("Save error:", err));
   };
 
-  const handleEdit = (cat) => {
-    setIsEditing(true);
-    setEditingId(cat._id);
-    setForm({
-      name: cat.name,
-      description: cat.description,
-      image: "",
-    });
-    setPreview(`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`);
-    setShowModal(true);
-  };
+ const handleEdit = (cat) => {
+  setIsEditing(true);
+  setEditingId(cat._id);
+  setForm({
+    name: cat.name,
+    description: cat.description,
+    image: cat.image, // store the image URL instead of an empty string
+  });
+  setPreview(`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`); // show the current image as preview
+  setShowModal(true);
+};
 
   const handleDelete = (id) => {
     axios
