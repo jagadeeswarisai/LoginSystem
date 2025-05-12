@@ -49,7 +49,7 @@ function SignUp({ onSwitchToLogin }) {
     }
 
     try {
-      const response = await fetch("https://loginsystembackend-yjua.onrender.com/signup", {
+      const response = await fetch("https://loginsystembackendecommercesite.onrender.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

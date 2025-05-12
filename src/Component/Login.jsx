@@ -11,7 +11,7 @@ function Login({ onSwitchToSignUp }) {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("https://loginsystembackend-yjua.onrender.com/login", {
+    const response = await fetch("https://loginsystembackendecommercesite.onrender.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

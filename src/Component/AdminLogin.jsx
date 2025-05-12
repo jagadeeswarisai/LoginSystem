@@ -9,7 +9,7 @@ const AdminLogin = () => {
   const handleLogin = async (e) => {
   e.preventDefault();
   try {
-    const response = await fetch("https://loginsystembackend-yjua.onrender.com/admin-login", {
+    const response = await fetch("https://loginsystembackendecommercesite.onrender.com/admin-login", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
