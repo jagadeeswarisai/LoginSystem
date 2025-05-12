@@ -5,32 +5,38 @@ const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  
   const handleLogin = async (e) => {
-    e.preventDefault();
-  
-    try {
-      const response = await fetch("https://loginsystembackend-1.onrender.com/admin-login", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ adminName: email, password }),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok && data.status === 'success') {
-        alert('Admin Login Success');
-        navigate('/adminhome');
-      } else {
-        alert(data.message || 'Invalid credentials');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('An error occurred. Try again later.');
+  e.preventDefault();
+  try {
+    const response = await fetch("https://loginsystembackend-yjua.onrender.com/admin-login", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    // Check if the response is successful
+    if (!response.ok) {
+      const errorData = await response.json(); // Parse the error message if any
+      alert(errorData.message || 'Something went wrong');
+      return;
     }
-  };
-  
+
+    const data = await response.json(); // Now safely parse the JSON response
+
+    if (data.status === 'success') {
+      alert('Admin Login Success');
+      navigate('/adminhome'); // Redirect on success
+    } else {
+      alert(data.message || 'Invalid credentials');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('An error occurred. Try again later.');
+  }
+};
 
   return (
     <div
