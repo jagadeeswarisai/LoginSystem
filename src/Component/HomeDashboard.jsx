@@ -4,12 +4,12 @@ import axios from "axios";
 
 const HomeDashboard = () => {
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(""); // Error state
+  const [loading, setLoading] = useState(true);  // Loading state
+  const [error, setError] = useState("");       // Error state
 
   useEffect(() => {
     axios
-      .get("https://loginsystembackendecommercesite.onrender.com/api/categories") // Fetch categories from the backend
+      .get("https://loginsystembackendecommercesite.onrender.com/api/categories")  // Fetch categories from the backend
       .then((res) => {
         setCategories(res.data);
         setLoading(false);
@@ -24,7 +24,6 @@ const HomeDashboard = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-gray-600">Loading...</p>
-        {/* Optionally, add a spinner for better UI */}
       </div>
     );
   }
@@ -39,25 +38,25 @@ const HomeDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2>
-
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2> {/* Change title to match watches */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
         {categories.length > 0 ? (
-          categories.map(({ _id, name, image }) => (
+          categories.map((cat) => (
             <Link
-              key={_id}
-              to={`/homedashboard/category/${name}`} // Link to the specific category
+              key={cat._id}
+              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
               className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
             >
               <img
-                src={image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${image}` : "/default-category.jpg"} // Use a default image if missing
-                alt={name}
-                onError={(e) => e.target.src = "/default-category.jpg"} // Set the default image on error
+                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
+                alt={cat.name}
                 className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
               />
               <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">
-                {name}
+                {cat.name}
               </h2>
+             
             </Link>
           ))
         ) : (
