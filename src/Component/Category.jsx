@@ -176,8 +176,7 @@ const Category = () => {
 
       {/* Table */}
       <div className="overflow-x-auto mt-8 bg-white shadow rounded-lg border border-blue-200">
-        <div className="overflow-x-auto mt-8 bg-white shadow rounded-lg border border-blue-200 max-h-[400px] overflow-y-scroll">
-
+       
       <table className="min-w-full text-sm text-left">
         <thead className="bg-blue-100 text-gray-600 uppercase text-xs">
           <tr>
@@ -230,7 +229,6 @@ const Category = () => {
           )}
         </tbody>
       </table>
-      </div>
     </div>
     </div>
   );
