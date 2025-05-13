@@ -92,7 +92,7 @@ const ProductList = () => {
 
       <div className="mt-6 animate-fadeIn">
         <div className="w-full max-h-[500px] overflow-x-auto overflow-y-auto smooth-scroll rounded-xl border border-blue-200 shadow-lg">
-          <table className="min-w-[1000px] w-full divide-y divide-gray-200">
+          <table className="min-w-[1500px] w-full divide-y divide-gray-200">
             <thead className="bg-blue-100 text-xs uppercase sticky top-0 z-10">
               <tr>
                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
