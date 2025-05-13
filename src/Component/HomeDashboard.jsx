@@ -38,32 +38,53 @@ const HomeDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2> {/* Change title to match watches */}
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-        {categories.length > 0 ? (
-          categories.map((cat) => (
-            <Link
-              key={cat._id}
-              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
-              className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-            >
-              <img
-                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
-                alt={cat.name}
-                className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
-              />
-              <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">
-                {cat.name}
-              </h2>
-             
-            </Link>
-          ))
-        ) : (
-          <p className="text-center text-gray-500 col-span-full">No categories available.</p>
-        )}
-      </div>
-    </div>
+  {/* Electronics Section */}
+  <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 mb-10">
+    {electronics.length > 0 ? (
+      electronics.map((cat) => (
+        <Link
+          key={cat._id}
+          to={`/homedashboard/category/${cat.name}`}
+          className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+        >
+          <img
+            src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
+            alt={cat.name}
+            className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
+          />
+          <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
+        </Link>
+      ))
+    ) : (
+      <p className="text-center text-gray-500 col-span-full">No electronics available.</p>
+    )}
+  </div>
+
+  {/* Home Appliances Section */}
+  <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Home Appliances</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+    {homeAppliances.length > 0 ? (
+      homeAppliances.map((cat) => (
+        <Link
+          key={cat._id}
+          to={`/homedashboard/category/${cat.name}`}
+          className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+        >
+          <img
+            src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
+            alt={cat.name}
+            className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
+          />
+          <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
+        </Link>
+      ))
+    ) : (
+      <p className="text-center text-gray-500 col-span-full">No Home appliances available.</p>
+    )}
+  </div>
+</div>
+
   );
 };
 
