@@ -12,6 +12,7 @@ const ProductList = () => {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
 
+  // Fetch products and categories from the backend
   const fetchProducts = async () => {
     const res = await axios.get('https://loginsystembackendecommercesite.onrender.com/api/products');
     setProducts(res.data);
@@ -45,10 +46,13 @@ const ProductList = () => {
 
     try {
       if (editId) {
+        // Update product
         await axios.put(`https://loginsystembackendecommercesite.onrender.com/api/products/${editId}`, data);
       } else {
+        // Add new product
         await axios.post('https://loginsystembackendecommercesite.onrender.com/api/products', data);
       }
+      // After adding or editing a product, fetch the updated list
       fetchProducts();
       setFormData({
         name: '', description: '', price: '', height: '', weight: '',
@@ -56,7 +60,7 @@ const ProductList = () => {
         category: '', image: null
       });
       setEditId(null);
-      setShowModal(false);
+      setShowModal(false); // Close modal after action
     } catch (error) {
       console.error('Error saving product:', error);
     }
@@ -70,7 +74,7 @@ const ProductList = () => {
 
   const handleDelete = async id => {
     await axios.delete(`https://loginsystembackendecommercesite.onrender.com/api/products/${id}`);
-    fetchProducts();
+    fetchProducts(); // Refresh product list after delete
   };
 
   return (
@@ -92,7 +96,7 @@ const ProductList = () => {
 
       <div className="mt-6 animate-fadeIn">
         <div className="w-full max-h-[500px] overflow-x-auto overflow-y-auto smooth-scroll rounded-xl border border-blue-200 shadow-lg">
-          <table className="min-w-[1500px] w-full divide-y divide-gray-200">
+          <table className="min-w-[1000px] w-full divide-y divide-gray-200">
             <thead className="bg-blue-100 text-xs uppercase sticky top-0 z-10">
               <tr>
                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
