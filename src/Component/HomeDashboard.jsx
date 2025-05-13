@@ -1,69 +1,67 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom"; // To handle navigation
 import axios from "axios";
-import { FaShoppingCart, FaBolt } from "react-icons/fa";
 
 const HomeDashboard = () => {
-  const { productId } = useParams();
-  const [product, setProduct] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);  // Loading state
+  const [error, setError] = useState("");       // Error state
 
   useEffect(() => {
     axios
-      .get(`https://loginsystembackendecommercesite.onrender.com/api/products/${productId}`)
-      .then((res) => setProduct(res.data))
+      .get("https://loginsystembackendecommercesite.onrender.com/api/categories")  // Fetch categories from the backend
+      .then((res) => {
+        setCategories(res.data);
+        setLoading(false);
+      })
       .catch((err) => {
-        console.error("Error fetching product details:", err);
-        alert("Unable to fetch product details. Please try again later.");
+        setError("Error fetching categories");
+        setLoading(false);
       });
-  }, [productId]);
+  }, []);
 
-  if (!product) {
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-gray-600">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-600">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      <div className="flex flex-col lg:flex-row gap-8">
-        
-        {/* Left: Image Box */}
-        <div className="w-full lg:w-1/3 border border-gray-200 rounded-xl p-4 shadow-md bg-white">
-          <img
-            src={`https://loginsystembackendecommercesite.onrender.com/uploads/${product.image}`}
-            alt={product.name}
-            className="w-full h-auto max-h-[400px] object-cover rounded-lg"
-          />
-        </div>
-
-        {/* Center: Product Details */}
-        <div className="w-full lg:w-1/3 border border-gray-200 rounded-xl p-6 shadow-md bg-white">
-          <h2 className="text-3xl font-bold mb-4 text-gray-800">{product.name}</h2>
-          <p className="text-gray-700 mb-4">{product.description}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700 text-sm">
-            <p><span className="font-bold">Price:</span> ₹{product.price}</p>
-            <p><span className="font-bold">Weight:</span> {product.weight} kg</p>
-            <p><span className="font-bold">Height:</span> {product.height} mm</p>
-            <p><span className="font-bold">Width:</span> {product.width} mm</p>
-            <p><span className="font-bold">Length:</span> {product.length} mm</p>
-            <p><span className="font-bold">Tax:</span> {product.tax}</p>
-            <p><span className="font-bold">Status:</span> {product.status}</p>
-            <p><span className="font-bold">Warehouse:</span> {product.warehouseLocation}</p>
-            <p><span className="font-bold">Category:</span> {product.category}</p>
-          </div>
-        </div>
-
-        {/* Right: Buttons Box */}
-        <div className="w-full lg:w-1/3 border border-gray-200 rounded-xl p-6 shadow-md bg-white flex flex-col justify-center items-center gap-4">
-          <button className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full">
-            <FaShoppingCart /> Add to Cart
-          </button>
-          <button className="flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition w-full">
-            <FaBolt /> Buy Now
-          </button>
-        </div>
+    <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen mt-10">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2> {/* Change title to match watches */}
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        {categories.length > 0 ? (
+          categories.map((cat) => (
+            <Link
+              key={cat._id}
+              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
+              className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+            >
+              <img
+                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
+                alt={cat.name}
+                className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
+              />
+              <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">
+                {cat.name}
+              </h2>
+             
+            </Link>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">No categories available.</p>
+        )}
       </div>
     </div>
   );
