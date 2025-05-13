@@ -91,7 +91,7 @@ const ProductList = () => {
       </button>
 
       <div className="mt-6 animate-fadeIn">
-        <div className="w-full overflow-x-auto smooth-scroll rounded-xl border border-blue-200 shadow-lg">
+        <div className="w-full max-h-[500px] overflow-x-auto overflow-y-auto smooth-scroll rounded-xl border border-blue-200 shadow-lg">
           <table className="min-w-[1000px] w-full divide-y divide-gray-200">
             <thead className="bg-blue-100 text-xs uppercase sticky top-0 z-10">
               <tr>
@@ -105,7 +105,7 @@ const ProductList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-blue-200 bg-white">
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <tr key={product._id} className="hover:bg-gray-50 transition">
                   <td className="px-4 py-2">
                     {product.image && (
@@ -184,10 +184,11 @@ const ProductList = () => {
       <style>
         {`
           .smooth-scroll::-webkit-scrollbar {
+            width: 6px;
             height: 6px;
           }
           .smooth-scroll::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1; 
+            background-color: #cbd5e1;
             border-radius: 10px;
           }
         `}
