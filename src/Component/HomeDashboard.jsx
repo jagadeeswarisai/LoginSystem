@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // To handle navigation
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 const HomeDashboard = () => {
   const [electronics, setElectronics] = useState([]);
   const [homeAppliances, setHomeAppliances] = useState([]);
-  const [loading, setLoading] = useState(true);  // Loading state
-  const [error, setError] = useState("");       // Error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Fetching electronics categories
@@ -24,7 +24,7 @@ const HomeDashboard = () => {
       .get("https://loginsystembackendecommercesite.onrender.com/api/categories?group=Home Appliances")
       .then((res) => {
         setHomeAppliances(res.data);
-        setLoading(false);  // Set loading to false when all data is fetched
+        setLoading(false);
       })
       .catch((err) => {
         setError("Error fetching home appliances categories");
@@ -62,7 +62,7 @@ const HomeDashboard = () => {
               className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
             >
               <img
-                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
+                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
                 alt={cat.name}
                 className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
               />
@@ -85,7 +85,7 @@ const HomeDashboard = () => {
               className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
             >
               <img
-                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"} // Use a default image if missing
+                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
                 alt={cat.name}
                 className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
               />
