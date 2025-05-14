@@ -6,7 +6,6 @@ const Category = () => {
   const [form, setForm] = useState({
     name: "",
     description: "",
-    group: "",
     image: null,
   });
   const [preview, setPreview] = useState("");
@@ -34,6 +33,7 @@ const Category = () => {
     const file = e.target.files[0];
     if (file) {
       setForm((prev) => ({ ...prev, image: file }));
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
@@ -43,7 +43,7 @@ const Category = () => {
   };
 
   const resetForm = () => {
-    setForm({ name: "", description: "", group: "", image: null });
+    setForm({ name: "", description: "", image: null });
     setPreview("");
     setIsEditing(false);
     setEditingId(null);
@@ -52,10 +52,10 @@ const Category = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append("name", form.name);
     formData.append("description", form.description);
-    formData.append("group", form.group);
     if (form.image && typeof form.image !== "string") {
       formData.append("image", form.image);
     }
@@ -73,20 +73,17 @@ const Category = () => {
       .catch((err) => console.error("Save error:", err));
   };
 
-  const handleEdit = (cat) => {
-    setIsEditing(true);
-    setEditingId(cat._id);
-    setForm({
-      name: cat.name,
-      description: cat.description,
-      group: cat.group || "",
-      image: cat.image,
-    });
-    setPreview(
-      `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`
-    );
-    setShowModal(true);
-  };
+ const handleEdit = (cat) => {
+  setIsEditing(true);
+  setEditingId(cat._id);
+  setForm({
+    name: cat.name,
+    description: cat.description,
+    image: cat.image, // store the image URL instead of an empty string
+  });
+  setPreview(`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`); // show the current image as preview
+  setShowModal(true);
+};
 
   const handleDelete = (id) => {
     axios
@@ -105,6 +102,7 @@ const Category = () => {
             setShowModal(true);
           }}
           className="bg-blue-600 text-white px-4 py-2 rounded transition-transform duration-300 hover:scale-105 hover:bg-blue-700 animate-fadeIn"
+      
         >
           Add New Category
         </button>
@@ -113,135 +111,128 @@ const Category = () => {
       {/* Modal Form */}
       {showModal && (
         <div className="fixed inset-0 bg-opacity-50 bg-gray-900 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100 animate-fadeIn">
-            <h2 className="text-xl font-semibold mb-4 text-center">
-              {isEditing ? "Edit Category" : "Add Category"}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block font-medium mb-1">Name</label>
-                <input
-                  name="name"
-                  value={form.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100 animate-fadeIn">
+          <h2 className="text-xl font-semibold mb-4 text-center">
+            {isEditing ? "Edit Category" : "Add Category"}
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block font-medium mb-1">Name</label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleInputChange}
+                required
+                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleInputChange}
+                required
+                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">Image</label>
+              <input
+                type="file"
+                onChange={handleImageChange}
+                accept="image/*"
+                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {preview && (
+                <img
+                
+                  src={preview}
+                  alt="Preview"
+                  className="mt-2 w-32 h-32 object-cover rounded border"
                 />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Description</label>
-                <textarea
-                  name="description"
-                  value={form.description}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Group</label>
-                <input
-                  name="group"
-                  value={form.group}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g. Electronics, Home Appliances"
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Image</label>
-                <input
-                  type="file"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {preview && (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="mt-2 w-32 h-32 object-cover rounded border"
-                  />
-                )}
-              </div>
-              <div className="flex justify-between mt-4">
-                <button
-                  type="submit"
-                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                >
-                  {isEditing ? "Update" : "Add"}
-                </button>
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+              )}
+            </div>
+            <div className="flex justify-between mt-4">
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                {isEditing ? "Update" : "Add"}
+              </button>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
+      
       )}
 
       {/* Table */}
       <div className="overflow-x-auto mt-8 bg-white shadow rounded-lg border border-blue-200">
-        <table className="min-w-full text-sm text-left">
-          <thead className="bg-blue-100 text-gray-600 uppercase text-xs">
-            <tr>
-              <th className="px-6 py-3">Image</th>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3 hidden md:table-cell">Description</th>
-              <th className="px-6 py-3 hidden md:table-cell">Group</th>
-              <th className="px-6 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-blue-200">
-            {categories.length > 0 ? (
-              categories.map((cat) => (
-                <tr
-                  key={cat._id}
-                  className="hover:bg-gray-50 transition duration-300 ease-in-out transform hover:scale-[1.01] animate-fade-in"
-                >
-                  <td className="px-6 py-3">
-                    <img
-                      src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
-                      alt={cat.name}
-                      className="w-16 h-16 object-cover rounded-lg shadow"
-                    />
-                  </td>
-                  <td className="px-6 py-3 font-medium">{cat.name}</td>
-                  <td className="px-6 py-3 text-gray-600 hidden md:table-cell">{cat.description}</td>
-                  <td className="px-6 py-3 text-gray-600 hidden md:table-cell">{cat.group}</td>
-                  <td className="px-6 py-3 text-center space-x-2">
-                    <button
-                      onClick={() => handleEdit(cat)}
-                      className="bg-yellow-500 text-white px-4 py-2 rounded-md text-xs hover:bg-yellow-600 transition-all duration-300 transform hover:scale-105"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(cat._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-md text-xs hover:bg-red-600 transition-all duration-300 transform hover:scale-105"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="text-center py-4 text-gray-500">
-                  No categories found.
+       
+      <table className="min-w-full text-sm text-left">
+        <thead className="bg-blue-100 text-gray-600 uppercase text-xs">
+          <tr>
+            <th className="px-6 py-3">Image</th>
+            <th className="px-6 py-3">Name</th>
+            <th className="px-6 py-3 hidden md:table-cell">Description</th>
+            <th className="px-6 py-3 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-blue-200">
+          {categories.length > 0 ? (
+            categories.map((cat) => (
+              <tr
+                key={cat._id}
+                className="hover:bg-gray-50 transition duration-300 ease-in-out transform hover:scale-[1.01] animate-fade-in"
+              >
+                <td className="px-6 py-3">
+                  <img
+                    src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
+                    alt={cat.name}
+                    className="w-16 h-16 object-cover rounded-lg shadow"
+                  />
+                </td>
+                <td className="px-6 py-3 font-medium">{cat.name}</td>
+                <td className="px-6 py-3 text-gray-600 hidden md:table-cell">
+                  {cat.description}
+                </td>
+                <td className="px-6 py-3 text-center space-x-2">
+                  <button
+                    onClick={() => handleEdit(cat)}
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-md text-xs hover:bg-yellow-600 transition-all duration-300 transform hover:scale-105"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(cat._id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md text-xs hover:bg-red-600 transition-all duration-300 transform hover:scale-105"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" className="text-center py-4 text-gray-500">
+                No categories found.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
     </div>
   );
 };
 
 export default Category;
+
