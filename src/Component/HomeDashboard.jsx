@@ -3,34 +3,26 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const HomeDashboard = () => {
-  const [electronics, setElectronics] = useState([]);
-  const [homeAppliances, setHomeAppliances] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetching electronics categories
     axios
-      .get("https://loginsystembackendecommercesite.onrender.com/api/categories?group=Electronics")
+      .get("https://loginsystembackendecommercesite.onrender.com/api/categories")
       .then((res) => {
-        setElectronics(res.data);
+        setCategories(res.data); // Store all categories in one state
+        setLoading(false);
       })
       .catch((err) => {
-        setError("Error fetching electronics categories");
+        setError("Error fetching categories");
+        setLoading(false);
       });
+  }, []); // Run once when component mounts
 
-    // Fetching home appliances categories
-    axios
-      .get("https://loginsystembackendecommercesite.onrender.com/api/categories?group=Home Appliances")
-      .then((res) => {
-        setHomeAppliances(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Error fetching home appliances categories");
-        setLoading(false);
-      });
-  }, []); // Empty dependency array ensures this runs once when the component mounts
+  // Filter categories based on group
+  const electronics = categories.filter((cat) => cat.group === "Electronics");
+  const homeAppliances = categories.filter((cat) => cat.group === "Home Appliances");
 
   if (loading) {
     return (
