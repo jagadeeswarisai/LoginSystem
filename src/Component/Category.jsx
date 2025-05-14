@@ -174,60 +174,62 @@ const Category = () => {
       
       )}
 
-      {/* Table */}
-    <div className="mt-8 bg-white shadow rounded-lg border max-h-[400px] overflow-y-auto">
+   <div className="mt-8 border rounded-lg overflow-hidden">
   <div className="overflow-x-auto">
-    <table className="min-w-full text-sm text-left">
-      <thead className="bg-blue-100 text-gray-600 uppercase text-xs">
-        <tr>
-          <th className="px-6 py-3">Image</th>
-          <th className="px-6 py-3">Name</th>
-          <th className="px-6 py-3 hidden md:table-cell">Description</th>
-          <th className="px-6 py-3">Group</th>
-          <th className="px-6 py-3 text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-blue-200">
-        {categories.length > 0 ? (
-          categories.map((cat) => (
-            <tr key={cat._id} className="hover:bg-gray-50">
-              <td className="px-6 py-3">
-                <img
-                  src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
-                  alt={cat.name}
-                  className="w-16 h-16 object-cover rounded-lg"
-                />
-              </td>
-              <td className="px-6 py-3 font-medium">{cat.name}</td>
-              <td className="px-6 py-3 text-gray-600 hidden md:table-cell">{cat.description}</td>
-              <td className="px-6 py-3">{cat.group}</td>
-              <td className="px-6 py-3 text-center space-x-2">
-                <button
-                  onClick={() => handleEdit(cat)}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded text-xs hover:bg-yellow-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(cat._id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded text-xs hover:bg-red-600"
-                >
-                  Delete
-                </button>
+    <div className="max-h-[400px] overflow-y-auto">
+      <table className="min-w-full text-sm text-left">
+        <thead className="bg-blue-100 text-gray-600 uppercase text-xs">
+          <tr>
+            <th className="px-6 py-3">Image</th>
+            <th className="px-6 py-3">Name</th>
+            <th className="px-6 py-3 hidden md:table-cell">Description</th>
+            <th className="px-6 py-3">Group</th>
+            <th className="px-6 py-3 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-blue-200">
+          {categories.length > 0 ? (
+            categories.map((cat) => (
+              <tr key={cat._id} className="hover:bg-gray-50">
+                <td className="px-6 py-3">
+                  <img
+                    src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
+                    alt={cat.name}
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />
+                </td>
+                <td className="px-6 py-3 font-medium">{cat.name}</td>
+                <td className="px-6 py-3 text-gray-600 hidden md:table-cell">{cat.description}</td>
+                <td className="px-6 py-3">{cat.group}</td>
+                <td className="px-6 py-3 text-center space-x-2">
+                  <button
+                    onClick={() => handleEdit(cat)}
+                    className="bg-yellow-500 text-white px-4 py-2 rounded text-xs hover:bg-yellow-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(cat._id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded text-xs hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" className="text-center py-4 text-gray-500">
+                No categories found.
               </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="5" className="text-center py-4 text-gray-500">
-              No categories found.
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+          )}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
+
 
     </div>
   );
