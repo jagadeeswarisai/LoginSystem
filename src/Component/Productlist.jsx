@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Productlist = () => {
+const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
@@ -11,17 +11,9 @@ const Productlist = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
-  
-  // Filter states
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
 
-  const fetchProducts = async (category = '', status = '') => {
-    const params = {};
-    if (category) params.category = category;
-    if (status) params.status = status;
-
-    const res = await axios.get('https://loginsystembackendecommercesite.onrender.com/api/products', { params });
+  const fetchProducts = async () => {
+    const res = await axios.get('https://loginsystembackendecommercesite.onrender.com/api/products');
     setProducts(res.data);
   };
 
@@ -31,9 +23,9 @@ const Productlist = () => {
   };
 
   useEffect(() => {
-    fetchProducts(selectedCategory, selectedStatus);  // Fetch with filters
+    fetchProducts();
     fetchCategories();
-  }, [selectedCategory, selectedStatus]);
+  }, []);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -57,7 +49,7 @@ const Productlist = () => {
       } else {
         await axios.post('https://loginsystembackendecommercesite.onrender.com/api/products', data);
       }
-      fetchProducts(selectedCategory, selectedStatus);  // Fetch after adding or editing
+      fetchProducts();
       setFormData({ name: '', description: '', price: '', height: '', weight: '', length: '', width: '', status: 'Available', tax: '', warehouseLocation: '', category: '', image: null });
       setEditId(null);
       setShowModal(false);
@@ -74,112 +66,80 @@ const Productlist = () => {
 
   const handleDelete = async id => {
     await axios.delete(`https://loginsystembackendecommercesite.onrender.com/api/products/${id}`);
-    fetchProducts(selectedCategory, selectedStatus);  // Fetch after deleting
+    fetchProducts();
   };
-
-  // Function to get unique categories
-  const getUniqueCategories = (categories) => {
-    return [...new Set(categories.map(cat => cat.name))];
-  };
-
-  const uniqueCategories = getUniqueCategories(categories);
 
   return (
-    <div className="p-6">
-      {/* Filter Controls */}
-      <div className="flex justify-between mb-6">
-        <div className="flex gap-4">
-          <select 
-            value={selectedCategory} 
-            onChange={e => setSelectedCategory(e.target.value)} 
-            className="border p-2 rounded"
-          >
-            <option value="">All Categories</option>
-            {uniqueCategories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-          <select 
-            value={selectedStatus} 
-            onChange={e => setSelectedStatus(e.target.value)} 
-            className="border p-2 rounded"
-          >
-            <option value="">All Status</option>
-            <option value="Available">Available</option>
-            <option value="Out of Stock">Out of Stock</option>
-          </select>
-        </div>
-        <button
-          onClick={() => {
-            setFormData({
-              name: '', description: '', price: '', height: '', weight: '',
-              length: '', width: '', status: 'Available', tax: '', warehouseLocation: '',
-              category: '', image: null
-            });
-            setEditId(null);
-            setShowModal(true);
-          }}
-          className="bg-blue-600 text-white px-4 py-2 rounded transition-transform duration-300 hover:scale-105 hover:bg-blue-700 animate-fadeIn"
-        >
-          Add New Product
-        </button>
-      </div>
-
+    <div className="p-6 ">
+      <button
+        onClick={() => {
+          setFormData({
+            name: '', description: '', price: '', height: '', weight: '',
+            length: '', width: '', status: 'Available', tax: '', warehouseLocation: '',
+            category: '', image: null
+          });
+          setEditId(null);
+          setShowModal(true);
+        }}
+        className="bg-blue-600 text-white px-4 py-2 rounded transition-transform duration-300 hover:scale-105 hover:bg-blue-700 animate-fadeIn"
+      >
+        Add New Product
+      </button>
       <div className="mt-6 animate-fadeIn">
-        <div className="w-full overflow-auto rounded-xl border border-blue-200 shadow-lg transition-all duration-500 ease-in-out hover:shadow-xl">
-          <table className="min-w-[800px] w-full divide-y divide-gray-200 transition-transform duration-500 ease-in-out">
-            <thead className="bg-blue-100 uppercase text-xs sticky top-0 z-10">
-              <tr>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Description</th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-blue-200 bg-white">
-              {products.map((product, index) => (
-                <tr
-                  key={product._id}
-                  className="hover:bg-gray-50 transition duration-300 ease-in-out animate-fadeIn"
-                  style={{ animationDelay: `${index * 0.05}s`, animationFillMode: "forwards" }}
-                >
-                  <td className="px-4 py-2">
-                    {product.image && (
-                      <img
-                        src={`https://loginsystembackendecommercesite.onrender.com/uploads/${product.image}`}
-                        alt={product.name}
-                        className="h-12 w-12 rounded-full object-cover transition-transform duration-300 hover:scale-110"
-                      />
-                    )}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-800">{product.name}</td>
-                  <td className="px-4 py-2 text-sm text-gray-600">{product.description}</td>
-                  <td className="px-4 py-2 text-sm text-gray-800">₹{product.price}</td>
-                  <td className="px-4 py-2 text-sm">{product.status}</td>
-                  <td className="px-4 py-2 text-sm">{product.category}</td>
-                  <td className="px-4 py-2">
-                    <button
-                      onClick={() => handleEdit(product)}
-                      className="bg-yellow-500 text-white px-3 py-1 text-xs rounded mr-2 hover:bg-yellow-600 transition-colors duration-300"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product._id)}
-                      className="bg-red-600 text-white px-3 py-1 text-xs rounded hover:bg-red-700 transition-colors duration-300"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+ <div className="w-full overflow-auto rounded-xl border border-blue-200 shadow-lg transition-all duration-500 ease-in-out hover:shadow-xl">
+    <table className="min-w-[800px] w-full divide-y divide-gray-200 transition-transform duration-500 ease-in-out">
+      <thead className="bg-blue-100 uppercase text-xs sticky top-0 z-10">
+        <tr>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 ">Description</th>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
+          <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-blue-200 bg-white">
+        {products.map((product, index) => (
+          <tr
+            key={product._id}
+            className="hover:bg-gray-50 transition duration-300 ease-in-out animate-fadeIn"
+            style={{ animationDelay: `${index * 0.05}s`, animationFillMode: "forwards" }}
+          >
+            <td className="px-4 py-2">
+              {product.image && (
+                <img
+                  src={`https://loginsystembackendecommercesite.onrender.com/uploads/${product.image}`}
+                  alt={product.name}
+                  className="h-12 w-12 rounded-full object-cover transition-transform duration-300 hover:scale-110"
+                />
+              )}
+            </td>
+            <td className="px-4 py-2 text-sm text-gray-800">{product.name}</td>
+            <td className="px-4 py-2 text-sm text-gray-600">{product.description}</td>
+            <td className="px-4 py-2 text-sm text-gray-800">₹{product.price}</td>
+            <td className="px-4 py-2 text-sm">{product.status}</td>
+            <td className="px-4 py-2 text-sm">{product.category}</td>
+            <td className="px-4 py-2">
+              <button
+                onClick={() => handleEdit(product)}
+                className="bg-yellow-500 text-white px-3 py-1 text-xs rounded mr-2 hover:bg-yellow-600 transition-colors duration-300"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(product._id)}
+                className="bg-red-600 text-white px-3 py-1 text-xs rounded hover:bg-red-700 transition-colors duration-300"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
       {/* Modal */}
       {showModal && (
@@ -204,8 +164,8 @@ const Productlist = () => {
 
               <select name="category" value={formData.category} onChange={handleChange} className="border p-2 rounded">
                 <option value="">Select Category</option>
-                {uniqueCategories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                {categories.map(cat => (
+                  <option key={cat._id} value={cat.name}>{cat.name}</option>
                 ))}
               </select>
 
@@ -220,10 +180,10 @@ const Productlist = () => {
               </div>
             </form>
           </div>
-</div>
-)}
-</div>
-);
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default Productlist;
+export default ProductList;
