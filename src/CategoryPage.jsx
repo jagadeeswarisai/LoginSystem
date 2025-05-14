@@ -26,9 +26,10 @@ const CategoryPage = () => {
       <h2 className="text-2xl font-bold text-gray-800 mb-6">{categoryName} Products</h2>
 
       {loading ? (
-        <div className="flex justify-center items-center min-h-[300px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-        </div>
+        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
+        <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin mb-4"></div>
+       
+      </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
           {products.length > 0 ? (
