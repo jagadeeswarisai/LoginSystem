@@ -175,10 +175,12 @@ const Category = () => {
       )}
 
    <div className="mt-8 border rounded-lg overflow-hidden">
-  <div className="overflow-x-auto">
-    <div className="max-h-[400px] overflow-y-auto">
-      <table className="min-w-full text-sm text-left">
-        <thead className="bg-blue-100 text-gray-600 uppercase text-xs">
+  {/* Horizontal scroll wrapper */}
+  <div className="w-full overflow-x-auto">
+    {/* Vertical scroll wrapper */}
+    <div className="min-w-[900px] max-h-[400px] overflow-y-auto">
+      <table className="w-full text-sm text-left">
+        <thead className="bg-blue-100 text-gray-600 uppercase text-xs sticky top-0 z-10">
           <tr>
             <th className="px-6 py-3">Image</th>
             <th className="px-6 py-3">Name</th>
