@@ -70,7 +70,7 @@ const HomeDashboard = () => {
             </Link>
           ))
         ) : (
-          <p className="text-center text-gray-500 col-span-full">No categories available.</p>
+          <p className="text-center text-gray-500 col-span-full">No electronics categories available.</p>
         )}
       </div>
 
@@ -93,7 +93,7 @@ const HomeDashboard = () => {
             </Link>
           ))
         ) : (
-          <p className="text-center text-gray-500 col-span-full">No categories available.</p>
+          <p className="text-center text-gray-500 col-span-full">No home appliances categories available.</p>
         )}
       </div>
     </div>
