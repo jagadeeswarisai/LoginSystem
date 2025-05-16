@@ -108,7 +108,6 @@ const Category = () => {
     }
   };
 
-  // Group categories by their 'group' field
   const groupByGroup = (categories) => {
     return categories.reduce((acc, category) => {
       const key = category.group || "Others";
@@ -175,7 +174,7 @@ const Category = () => {
               <div className="mb-3">
                 <label className="block font-medium">Image</label>
                 <input type="file" onChange={handleImageChange} accept="image/*" />
-                {preview && <img src={preview} alt="Preview" className="w-32 h-32 object-cover mt-2" />}
+                {preview && <img src={preview} alt="Preview" className="w-32 h-32 object-cover mt-2 rounded" />}
               </div>
               <div className="flex justify-between mt-6">
                 <button
@@ -202,9 +201,9 @@ const Category = () => {
         {Object.entries(groupByGroup(categories)).map(([groupName, groupCategories]) => (
           <div key={groupName} className="mb-10">
             <h2 className="text-xl font-semibold mb-4">Best Deals on {groupName}</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full border border-gray-300">
-                <thead className="bg-gray-100">
+            <div className="overflow-x-auto rounded-lg shadow-md">
+              <table className="min-w-full table-auto border border-gray-300 shadow-lg rounded-lg transition duration-300 ease-in-out">
+                <thead className="bg-gray-100 sticky top-0 z-10 shadow-md">
                   <tr>
                     <th className="p-2 border">Image</th>
                     <th className="p-2 border">Name</th>
@@ -214,13 +213,13 @@ const Category = () => {
                 </thead>
                 <tbody>
                   {groupCategories.map((cat) => (
-                    <tr key={cat._id} className="text-center">
+                    <tr key={cat._id} className="text-center hover:bg-blue-50 transition duration-300 ease-in-out">
                       <td className="p-2 border">
                         {cat.image ? (
                           <img
                             src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
                             alt={cat.name}
-                            className="w-16 h-16 object-cover mx-auto"
+                            className="w-16 h-16 object-cover mx-auto rounded"
                           />
                         ) : (
                           <span className="text-gray-400 italic">No Image</span>
@@ -231,13 +230,13 @@ const Category = () => {
                       <td className="p-2 border">
                         <button
                           onClick={() => handleEdit(cat)}
-                          className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                          className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-600"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(cat._id)}
-                          className="bg-red-600 text-white px-2 py-1 rounded"
+                          className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
                         >
                           Delete
                         </button>
