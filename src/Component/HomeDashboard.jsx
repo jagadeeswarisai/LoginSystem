@@ -4,7 +4,6 @@ import axios from "axios";
 
 const HomeDashboard = () => {
   const [categories, setCategories] = useState([]);
-  const [groupedCategories, setGroupedCategories] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -12,29 +11,18 @@ const HomeDashboard = () => {
     axios
       .get("https://loginsystembackendecommercesite.onrender.com/api/categories")
       .then((res) => {
-        const cats = res.data;
-        setCategories(cats);
-        setGroupedCategories(groupByGroup(cats));
+        setCategories(res.data); // Store all categories in one state
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
         setError("Error fetching categories");
         setLoading(false);
       });
-  }, []);
+  }, []); // Run once when component mounts
 
-  // Helper function to group categories by their 'group' field
-  const groupByGroup = (cats) => {
-    const grouped = {};
-    cats.forEach((cat) => {
-      const groupName = cat.group || "Other";
-      if (!grouped[groupName]) {
-        grouped[groupName] = [];
-      }
-      grouped[groupName].push(cat);
-    });
-    return grouped;
-  };
+  // Filter categories based on group
+  const electronics = categories.filter((cat) => cat.group === "Electronics");
+  const homeAppliances = categories.filter((cat) => cat.group === "Home Appliances");
 
   if (loading) {
     return (
@@ -55,34 +43,51 @@ const HomeDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen mt-10">
-      {Object.entries(groupedCategories).map(([group, items]) => (
-        <div key={group} className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On {group}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-            {items.map((cat) => (
-              <Link
-                key={cat._id}
-                to={`/homedashboard/category/${cat.name}`}
-                className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-              >
-                <img
-                  src={
-                    cat.image
-                      ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`
-                      : "/default-category.jpg"
-                  }
-                  alt={cat.name}
-                  className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
-                />
-                <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
-              </Link>
-            ))}
-          </div>
-          {items.length === 0 && (
-            <p className="text-center text-gray-500 col-span-full">No categories available in {group}.</p>
-          )}
-        </div>
-      ))}
+      {/* Electronics Categories */}
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        {electronics.length > 0 ? (
+          electronics.map((cat) => (
+            <Link
+              key={cat._id}
+              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
+              className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+            >
+              <img
+                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
+                alt={cat.name}
+                className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
+              />
+              <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
+            </Link>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">No electronics categories available.</p>
+        )}
+      </div>
+
+      {/* Home Appliances Categories */}
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 mt-12">Best Deals On Home Appliances</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        {homeAppliances.length > 0 ? (
+          homeAppliances.map((cat) => (
+            <Link
+              key={cat._id}
+              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
+              className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+            >
+              <img
+                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
+                alt={cat.name}
+                className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
+              />
+              <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
+            </Link>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">No home appliances categories available.</p>
+        )}
+      </div>
     </div>
   );
 };
