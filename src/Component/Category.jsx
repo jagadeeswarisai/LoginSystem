@@ -197,65 +197,62 @@ const Category = () => {
       )}
 
       {/* Grouped Category Tables */}
-      <div className="mt-10">
-        {Object.entries(groupByGroup(categories)).map(([groupName, groupCategories]) => (
-          <div key={groupName} className="mb-10">
-            <h2 className="text-xl font-semibold mb-4">Best Deals on {groupName}</h2>
-            <div className="max-h-[400px] overflow-y-auto rounded-lg shadow-md">
-              <table className="min-w-[800px] w-full table-auto border border-gray-300 shadow-lg rounded-lg transition duration-300 ease-in-out">
-                <thead className="bg-blue-100 uppercase text-xs sticky top-0 z-10">
-                  <tr>
-                    <th className="p-2 border">Image</th>
-                    <th className="p-2 border">Name</th>
-                    <th className="p-2 border">Description</th>
-                    <th className="p-2 border">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {groupCategories.map((cat) => (
-                    <tr key={cat._id} className="text-center hover:bg-blue-50 transition duration-300 ease-in-out">
-                      <td className="p-2 border">
-                        {cat.image ? (
-                          <img
-                            src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
-                            alt={cat.name}
-                            className="w-16 h-16 object-cover mx-auto rounded"
-                          />
-                        ) : (
-                          <span className="text-gray-400 italic">No Image</span>
-                        )}
-                      </td>
-                      <td className="p-2 border">{cat.name}</td>
-                      <td className="p-2 border">{cat.description}</td>
-                      <td className="p-2 border">
-                        <button
-                          onClick={() => handleEdit(cat)}
-                          className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-600"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(cat._id)}
-                          className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {groupCategories.length === 0 && (
-                    <tr>
-                      <td colSpan="4" className="p-4 text-center text-gray-500">
-                        No categories in this group.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ))}
-      </div>
+     <table className="min-w-[800px] w-full table-auto border border-gray-300 rounded-lg shadow-lg transition duration-300 ease-in-out">
+  <thead className="bg-blue-700 text-white uppercase text-xs sticky top-0 z-10">
+    <tr>
+      <th className="p-3 border border-blue-600">Image</th>
+      <th className="p-3 border border-blue-600">Name</th>
+      <th className="p-3 border border-blue-600">Description</th>
+      <th className="p-3 border border-blue-600">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {groupCategories.map((cat, index) => (
+      <tr
+        key={cat._id}
+        className={`text-center transition duration-300 ease-in-out cursor-pointer
+          ${index % 2 === 0 ? "bg-white" : "bg-blue-50"}
+          hover:bg-blue-100`}
+      >
+        <td className="p-3 border border-blue-200">
+          {cat.image ? (
+            <img
+              src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
+              alt={cat.name}
+              className="w-16 h-16 object-cover mx-auto rounded"
+            />
+          ) : (
+            <span className="text-gray-400 italic">No Image</span>
+          )}
+        </td>
+        <td className="p-3 border border-blue-200">{cat.name}</td>
+        <td className="p-3 border border-blue-200">{cat.description}</td>
+        <td className="p-3 border border-blue-200">
+          <button
+            onClick={() => handleEdit(cat)}
+            className="bg-yellow-500 text-white px-3 py-1 rounded mr-3 hover:bg-yellow-600 transition"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDelete(cat._id)}
+            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    ))}
+    {groupCategories.length === 0 && (
+      <tr>
+        <td colSpan="4" className="p-4 text-center text-gray-500">
+          No categories in this group.
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
+
     </div>
   );
 };
