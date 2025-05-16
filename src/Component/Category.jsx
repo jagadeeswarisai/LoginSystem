@@ -3,6 +3,7 @@ import axios from "axios";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
+  const [groupList, setGroupList] = useState([]);
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -14,9 +15,9 @@ const Category = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  // Fetch categories
   useEffect(() => {
     fetchCategories();
+    fetchGroups();
   }, []);
 
   const fetchCategories = async () => {
@@ -25,6 +26,15 @@ const Category = () => {
       setCategories(res.data);
     } catch (err) {
       console.error("Error fetching categories:", err);
+    }
+  };
+
+  const fetchGroups = async () => {
+    try {
+      const res = await axios.get("https://loginsystembackendecommercesite.onrender.com/api/groups");
+      setGroupList(res.data); // Expects array of { name: "..." }
+    } catch (err) {
+      console.error("Error fetching groups:", err);
     }
   };
 
@@ -60,7 +70,6 @@ const Category = () => {
     formData.append("name", form.name);
     formData.append("description", form.description);
     formData.append("group", form.group);
-
     if (form.image instanceof File) {
       formData.append("image", form.image);
     }
@@ -76,7 +85,6 @@ const Category = () => {
         await axios.post("https://loginsystembackendecommercesite.onrender.com/api/categories", formData);
         alert("Category added successfully");
       }
-
       fetchCategories();
       resetForm();
     } catch (error) {
@@ -89,7 +97,7 @@ const Category = () => {
       name: cat.name,
       description: cat.description,
       group: cat.group || "",
-      image: null, // Clear the image field, expect user to re-upload if needed
+      image: null,
     });
     setPreview(`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`);
     setEditingId(cat._id);
@@ -156,8 +164,9 @@ const Category = () => {
                   className="w-full border p-2 rounded"
                 >
                   <option value="" disabled>Select a group</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Home Appliances">Home Appliances</option>
+                  {groupList.map((group, idx) => (
+                    <option key={idx} value={group.name}>{group.name}</option>
+                  ))}
                 </select>
               </div>
               <div className="mb-3">
