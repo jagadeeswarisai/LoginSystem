@@ -20,7 +20,9 @@ const Category = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("https://loginsystembackendecommercesite.onrender.com/api/categories");
+      const res = await axios.get(
+        "https://loginsystembackendecommercesite.onrender.com/api/categories"
+      );
       setCategories(res.data);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -72,7 +74,10 @@ const Category = () => {
         );
         alert("Category updated successfully");
       } else {
-        await axios.post("https://loginsystembackendecommercesite.onrender.com/api/categories", formData);
+        await axios.post(
+          "https://loginsystembackendecommercesite.onrender.com/api/categories",
+          formData
+        );
         alert("Category added successfully");
       }
 
@@ -90,7 +95,9 @@ const Category = () => {
       group: cat.group || "",
       image: null,
     });
-    setPreview(`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`);
+    setPreview(
+      `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`
+    );
     setEditingId(cat._id);
     setIsEditing(true);
     setShowModal(true);
@@ -99,7 +106,9 @@ const Category = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        await axios.delete(`https://loginsystembackendecommercesite.onrender.com/api/categories/${id}`);
+        await axios.delete(
+          `https://loginsystembackendecommercesite.onrender.com/api/categories/${id}`
+        );
         setCategories(categories.filter((cat) => cat._id !== id));
         alert("Category deleted");
       } catch (err) {
@@ -108,6 +117,7 @@ const Category = () => {
     }
   };
 
+  // Group categories by their 'group' field
   const groupByGroup = (categories) => {
     return categories.reduce((acc, category) => {
       const key = category.group || "Others";
@@ -118,6 +128,9 @@ const Category = () => {
       return acc;
     }, {});
   };
+
+  // Get grouped categories object
+  const groupedCategories = groupByGroup(categories);
 
   return (
     <div className="container mx-auto px-4 py-10">
@@ -134,7 +147,9 @@ const Category = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
-            <h2 className="text-lg font-bold mb-4">{isEditing ? "Edit Category" : "Add Category"}</h2>
+            <h2 className="text-lg font-bold mb-4">
+              {isEditing ? "Edit Category" : "Add Category"}
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="block font-medium">Category Name</label>
@@ -166,7 +181,9 @@ const Category = () => {
                   required
                   className="w-full border p-2 rounded"
                 >
-                  <option value="" disabled>Select a group</option>
+                  <option value="" disabled>
+                    Select a group
+                  </option>
                   <option value="Electronics">Electronics</option>
                   <option value="Home Appliances">Home Appliances</option>
                 </select>
@@ -174,7 +191,13 @@ const Category = () => {
               <div className="mb-3">
                 <label className="block font-medium">Image</label>
                 <input type="file" onChange={handleImageChange} accept="image/*" />
-                {preview && <img src={preview} alt="Preview" className="w-32 h-32 object-cover mt-2 rounded" />}
+                {preview && (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-32 h-32 object-cover mt-2 rounded"
+                  />
+                )}
               </div>
               <div className="flex justify-between mt-6">
                 <button
@@ -196,63 +219,67 @@ const Category = () => {
         </div>
       )}
 
-      {/* Grouped Category Tables */}
-     <table className="min-w-[800px] w-full table-auto border border-gray-300 rounded-lg shadow-lg transition duration-300 ease-in-out">
-  <thead className="bg-blue-700 text-white uppercase text-xs sticky top-0 z-10">
-    <tr>
-      <th className="p-3 border border-blue-600">Image</th>
-      <th className="p-3 border border-blue-600">Name</th>
-      <th className="p-3 border border-blue-600">Description</th>
-      <th className="p-3 border border-blue-600">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {groupCategories.map((cat, index) => (
-      <tr
-        key={cat._id}
-        className={`text-center transition duration-300 ease-in-out cursor-pointer
-          ${index % 2 === 0 ? "bg-white" : "bg-blue-50"}
-          hover:bg-blue-100`}
-      >
-        <td className="p-3 border border-blue-200">
-          {cat.image ? (
-            <img
-              src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
-              alt={cat.name}
-              className="w-16 h-16 object-cover mx-auto rounded"
-            />
-          ) : (
-            <span className="text-gray-400 italic">No Image</span>
-          )}
-        </td>
-        <td className="p-3 border border-blue-200">{cat.name}</td>
-        <td className="p-3 border border-blue-200">{cat.description}</td>
-        <td className="p-3 border border-blue-200">
-          <button
-            onClick={() => handleEdit(cat)}
-            className="bg-yellow-500 text-white px-3 py-1 rounded mr-3 hover:bg-yellow-600 transition"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleDelete(cat._id)}
-            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    ))}
-    {groupCategories.length === 0 && (
-      <tr>
-        <td colSpan="4" className="p-4 text-center text-gray-500">
-          No categories in this group.
-        </td>
-      </tr>
-    )}
-  </tbody>
-</table>
-
+      {/* Render grouped categories */}
+      {Object.entries(groupedCategories).map(([groupName, cats]) => (
+        <div key={groupName} className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">{groupName}</h2>
+          <table className="min-w-[800px] w-full table-auto border border-gray-300 rounded-lg shadow-lg transition duration-300 ease-in-out">
+            <thead className="bg-blue-700 text-white uppercase text-xs sticky top-0 z-10">
+              <tr>
+                <th className="p-3 border border-blue-600">Image</th>
+                <th className="p-3 border border-blue-600">Name</th>
+                <th className="p-3 border border-blue-600">Description</th>
+                <th className="p-3 border border-blue-600">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cats.map((cat, index) => (
+                <tr
+                  key={cat._id}
+                  className={`text-center transition duration-300 ease-in-out cursor-pointer
+                  ${index % 2 === 0 ? "bg-white" : "bg-blue-50"}
+                  hover:bg-blue-100`}
+                >
+                  <td className="p-3 border border-blue-200">
+                    {cat.image ? (
+                      <img
+                        src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
+                        alt={cat.name}
+                        className="w-16 h-16 object-cover mx-auto rounded"
+                      />
+                    ) : (
+                      <span className="text-gray-400 italic">No Image</span>
+                    )}
+                  </td>
+                  <td className="p-3 border border-blue-200">{cat.name}</td>
+                  <td className="p-3 border border-blue-200">{cat.description}</td>
+                  <td className="p-3 border border-blue-200">
+                    <button
+                      onClick={() => handleEdit(cat)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded mr-3 hover:bg-yellow-600 transition"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(cat._id)}
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {cats.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="p-4 text-center text-gray-500">
+                    No categories in this group.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      ))}
     </div>
   );
 };
