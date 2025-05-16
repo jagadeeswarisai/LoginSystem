@@ -201,9 +201,9 @@ const Category = () => {
         {Object.entries(groupByGroup(categories)).map(([groupName, groupCategories]) => (
           <div key={groupName} className="mb-10">
             <h2 className="text-xl font-semibold mb-4">Best Deals on {groupName}</h2>
-            <div className="overflow-x-auto rounded-lg shadow-md">
-              <table className="min-w-full table-auto border border-gray-300 shadow-lg rounded-lg transition duration-300 ease-in-out">
-                <thead className="bg-gray-100 sticky top-0 z-10 shadow-md">
+            <div className="max-h-[400px] overflow-y-auto rounded-lg shadow-md">
+              <table className="min-w-[800px] w-full table-auto border border-gray-300 shadow-lg rounded-lg transition duration-300 ease-in-out">
+                <thead className="bg-blue-100 uppercase text-xs sticky top-0 z-10">
                   <tr>
                     <th className="p-2 border">Image</th>
                     <th className="p-2 border">Name</th>
