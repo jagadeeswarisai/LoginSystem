@@ -14,7 +14,6 @@ const Category = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  // Fetch categories
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -89,7 +88,7 @@ const Category = () => {
       name: cat.name,
       description: cat.description,
       group: cat.group || "",
-      image: null, // Clear the image field, expect user to re-upload if needed
+      image: null,
     });
     setPreview(`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`);
     setEditingId(cat._id);
@@ -109,6 +108,18 @@ const Category = () => {
     }
   };
 
+  // Group categories by their 'group' field
+  const groupByGroup = (categories) => {
+    return categories.reduce((acc, category) => {
+      const key = category.group || "Others";
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(category);
+      return acc;
+    }, {});
+  };
+
   return (
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6">Category Management</h1>
@@ -120,6 +131,7 @@ const Category = () => {
         Add New Category
       </button>
 
+      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
@@ -185,58 +197,65 @@ const Category = () => {
         </div>
       )}
 
-      {/* Category Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 border">Image</th>
-              <th className="p-2 border">Name</th>
-              <th className="p-2 border">Description</th>
-              <th className="p-2 border">Group</th>
-              <th className="p-2 border">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((cat) => (
-              <tr key={cat._id} className="text-center">
-                <td className="p-2 border">
-                  {cat.image ? (
-                    <img
-                      src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
-                      alt={cat.name}
-                      className="w-16 h-16 object-cover mx-auto"
-                    />
-                  ) : (
-                    <span className="text-gray-400 italic">No Image</span>
+      {/* Grouped Category Tables */}
+      <div className="mt-10">
+        {Object.entries(groupByGroup(categories)).map(([groupName, groupCategories]) => (
+          <div key={groupName} className="mb-10">
+            <h2 className="text-xl font-semibold mb-4">Best Deals on {groupName}</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-gray-300">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-2 border">Image</th>
+                    <th className="p-2 border">Name</th>
+                    <th className="p-2 border">Description</th>
+                    <th className="p-2 border">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {groupCategories.map((cat) => (
+                    <tr key={cat._id} className="text-center">
+                      <td className="p-2 border">
+                        {cat.image ? (
+                          <img
+                            src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
+                            alt={cat.name}
+                            className="w-16 h-16 object-cover mx-auto"
+                          />
+                        ) : (
+                          <span className="text-gray-400 italic">No Image</span>
+                        )}
+                      </td>
+                      <td className="p-2 border">{cat.name}</td>
+                      <td className="p-2 border">{cat.description}</td>
+                      <td className="p-2 border">
+                        <button
+                          onClick={() => handleEdit(cat)}
+                          className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(cat._id)}
+                          className="bg-red-600 text-white px-2 py-1 rounded"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {groupCategories.length === 0 && (
+                    <tr>
+                      <td colSpan="4" className="p-4 text-center text-gray-500">
+                        No categories in this group.
+                      </td>
+                    </tr>
                   )}
-                </td>
-                <td className="p-2 border">{cat.name}</td>
-                <td className="p-2 border">{cat.description}</td>
-                <td className="p-2 border">{cat.group}</td>
-                <td className="p-2 border">
-                  <button
-                    onClick={() => handleEdit(cat)}
-                    className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(cat._id)}
-                    className="bg-red-600 text-white px-2 py-1 rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {categories.length === 0 && (
-              <tr>
-                <td colSpan="5" className="p-4 text-center text-gray-500">No categories found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

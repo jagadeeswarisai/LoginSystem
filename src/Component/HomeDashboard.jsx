@@ -11,18 +11,25 @@ const HomeDashboard = () => {
     axios
       .get("https://loginsystembackendecommercesite.onrender.com/api/categories")
       .then((res) => {
-        setCategories(res.data); // Store all categories in one state
+        setCategories(res.data);
         setLoading(false);
       })
       .catch((err) => {
         setError("Error fetching categories");
         setLoading(false);
       });
-  }, []); // Run once when component mounts
+  }, []);
 
-  // Filter categories based on group
-  const electronics = categories.filter((cat) => cat.group === "Electronics");
-  const homeAppliances = categories.filter((cat) => cat.group === "Home Appliances");
+  const groupCategories = (categories) => {
+    return categories.reduce((acc, category) => {
+      const group = category.group || "Others";
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+      acc[group].push(category);
+      return acc;
+    }, {});
+  };
 
   if (loading) {
     return (
@@ -41,53 +48,43 @@ const HomeDashboard = () => {
     );
   }
 
+  const grouped = groupCategories(categories);
+
   return (
     <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen mt-10">
-      {/* Electronics Categories */}
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Best Deals On Electronics</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-        {electronics.length > 0 ? (
-          electronics.map((cat) => (
-            <Link
-              key={cat._id}
-              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
-              className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-            >
-              <img
-                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
-                alt={cat.name}
-                className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
-              />
-              <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
-            </Link>
-          ))
-        ) : (
-          <p className="text-center text-gray-500 col-span-full">No electronics categories available.</p>
-        )}
-      </div>
-
-      {/* Home Appliances Categories */}
-      <h2 className="text-2xl font-bold text-gray-800 mb-4 mt-12">Best Deals On Home Appliances</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-        {homeAppliances.length > 0 ? (
-          homeAppliances.map((cat) => (
-            <Link
-              key={cat._id}
-              to={`/homedashboard/category/${cat.name}`} // Link to the specific category
-              className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-            >
-              <img
-                src={cat.image ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}` : "/default-category.jpg"}
-                alt={cat.name}
-                className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
-              />
-              <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
-            </Link>
-          ))
-        ) : (
-          <p className="text-center text-gray-500 col-span-full">No home appliances categories available.</p>
-        )}
-      </div>
+      {Object.entries(grouped).map(([groupName, groupCategories]) => (
+        <div key={groupName} className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Best Deals on {groupName}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            {groupCategories.length > 0 ? (
+              groupCategories.map((cat) => (
+                <Link
+                  key={cat._id}
+                  to={`/homedashboard/category/${cat.name}`}
+                  className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  <img
+                    src={
+                      cat.image
+                        ? `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`
+                        : "/default-category.jpg"
+                    }
+                    alt={cat.name}
+                    className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
+                  />
+                  <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
+                </Link>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 col-span-full">
+                No categories available in this group.
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
