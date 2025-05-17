@@ -47,7 +47,12 @@ function App() {
         <Route path="/homedashboard" element={<Layout />}>
           <Route index element={<HomeDashboard />} />
           <Route path="category/:categoryName" element={<CategoryPage />} />
-          
+          <Route path="product/:productId" element={<ProductDetailPage/>} />
+          <Route path="category/:categoryName" element={<PhoneDetailPage/>}/>
+          <Route path="category/:categoryName" element={<LaptopDetailPage/>}/>
+          <Route path="category/:categoryName" element={<TabletDetailPage/>}/>
+          <Route path="category/:categoryName" element={<EarbutsDetailPage/>}/>
+         
 
         </Route>
       </Routes>
