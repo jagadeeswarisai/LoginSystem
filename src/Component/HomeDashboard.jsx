@@ -14,7 +14,7 @@ const HomeDashboard = () => {
         setCategories(res.data);
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
         setError("Error fetching categories");
         setLoading(false);
       });
@@ -52,14 +52,14 @@ const HomeDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen mt-10">
-      {Object.entries(grouped).map(([groupName, categoriesInGroup]) => (
+      {Object.entries(grouped).map(([groupName, groupCategories]) => (
         <div key={groupName} className="mb-16">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             Best Deals on {groupName}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-            {categoriesInGroup.length > 0 ? (
-              categoriesInGroup.map((cat) => (
+            {groupCategories.length > 0 ? (
+              groupCategories.map((cat) => (
                 <Link
                   key={cat._id}
                   to={`/homedashboard/category/${cat.name}`}
@@ -74,9 +74,7 @@ const HomeDashboard = () => {
                     alt={cat.name}
                     className="w-40 h-40 object-cover rounded-lg mb-4 ring-2 ring-gray-300 hover:brightness-95 transition mx-auto"
                   />
-                  <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">
-                    {cat.name}
-                  </h2>
+                  <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">{cat.name}</h2>
                 </Link>
               ))
             ) : (
