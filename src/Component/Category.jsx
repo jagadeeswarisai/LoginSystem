@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const CLOUDINARY_UPLOAD_PRESET = "your_upload_preset"; // Replace with your preset
+const CLOUDINARY_CLOUD_NAME = "your_cloud_name"; // Replace with your cloud name
+const CLOUDINARY_API = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
+
 const Category = () => {
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
     name: "",
     description: "",
     group: "",
-    image: null,
+    image: null, // This will be the File object
+    imageUrl: "", // This will store the Cloudinary URL after upload
   });
   const [preview, setPreview] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -37,7 +42,7 @@ const Category = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setForm((prev) => ({ ...prev, image: file }));
+    setForm((prev) => ({ ...prev, image: file, imageUrl: "" }));
 
     if (file) {
       const reader = new FileReader();
@@ -48,8 +53,23 @@ const Category = () => {
     }
   };
 
+  // Upload image to Cloudinary and get URL
+  const uploadImageToCloudinary = async (imageFile) => {
+    const data = new FormData();
+    data.append("file", imageFile);
+    data.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+    try {
+      const res = await axios.post(CLOUDINARY_API, data);
+      return res.data.secure_url; // Return Cloudinary URL
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      return null;
+    }
+  };
+
   const resetForm = () => {
-    setForm({ name: "", description: "", group: "", image: null });
+    setForm({ name: "", description: "", group: "", image: null, imageUrl: "" });
     setPreview("");
     setIsEditing(false);
     setEditingId(null);
@@ -61,24 +81,33 @@ const Category = () => {
     e.preventDefault();
     setLoadingSubmit(true);
 
-    const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("description", form.description);
-    formData.append("group", form.group);
+    let imageUrl = form.imageUrl;
 
+    // If user uploaded a new image, upload it to Cloudinary
     if (form.image instanceof File) {
-      formData.append("image", form.image);
+      imageUrl = await uploadImageToCloudinary(form.image);
+      if (!imageUrl) {
+        alert("Image upload failed. Please try again.");
+        setLoadingSubmit(false);
+        return;
+      }
     }
+
+    const payload = {
+      name: form.name,
+      description: form.description,
+      group: form.group,
+      image: imageUrl, // Send the Cloudinary URL to backend
+    };
 
     try {
       let response;
       if (isEditing) {
         response = await axios.put(
           `https://loginsystembackendecommercesite.onrender.com/api/categories/${editingId}`,
-          formData
+          payload
         );
 
-        // Optimistically update local state
         setCategories((prev) =>
           prev.map((cat) => (cat._id === editingId ? response.data : cat))
         );
@@ -86,10 +115,8 @@ const Category = () => {
       } else {
         response = await axios.post(
           "https://loginsystembackendecommercesite.onrender.com/api/categories",
-          formData
+          payload
         );
-
-        // Optimistically add new category to local state
         setCategories((prev) => [...prev, response.data]);
         alert("Category added successfully");
       }
@@ -108,10 +135,9 @@ const Category = () => {
       description: cat.description,
       group: cat.group || "",
       image: null,
+      imageUrl: cat.image || "",
     });
-    setPreview(
-      `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`
-    );
+    setPreview(cat.image || "");
     setEditingId(cat._id);
     setIsEditing(true);
     setShowModal(true);
@@ -143,7 +169,6 @@ const Category = () => {
     }, {});
   };
 
-  // Get grouped categories object
   const groupedCategories = groupByGroup(categories);
 
   return (
@@ -272,7 +297,7 @@ const Category = () => {
                   <td className="p-3 border border-blue-200">
                     {cat.image ? (
                       <img
-                        src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
+                        src={cat.image}
                         alt={cat.name}
                         className="w-16 h-16 object-cover mx-auto rounded"
                       />
