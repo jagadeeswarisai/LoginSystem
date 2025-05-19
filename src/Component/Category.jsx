@@ -13,6 +13,7 @@ const Category = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   useEffect(() => {
     fetchCategories();
@@ -53,10 +54,13 @@ const Category = () => {
     setIsEditing(false);
     setEditingId(null);
     setShowModal(false);
+    setLoadingSubmit(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoadingSubmit(true);
+
     const formData = new FormData();
     formData.append("name", form.name);
     formData.append("description", form.description);
@@ -67,24 +71,34 @@ const Category = () => {
     }
 
     try {
+      let response;
       if (isEditing) {
-        await axios.put(
+        response = await axios.put(
           `https://loginsystembackendecommercesite.onrender.com/api/categories/${editingId}`,
           formData
         );
+
+        // Optimistically update local state
+        setCategories((prev) =>
+          prev.map((cat) => (cat._id === editingId ? response.data : cat))
+        );
         alert("Category updated successfully");
       } else {
-        await axios.post(
+        response = await axios.post(
           "https://loginsystembackendecommercesite.onrender.com/api/categories",
           formData
         );
+
+        // Optimistically add new category to local state
+        setCategories((prev) => [...prev, response.data]);
         alert("Category added successfully");
       }
 
-      fetchCategories();
       resetForm();
     } catch (error) {
+      console.error("Error submitting form:", error);
       alert("Error submitting form");
+      setLoadingSubmit(false);
     }
   };
 
@@ -190,7 +204,11 @@ const Category = () => {
               </div>
               <div className="mb-3">
                 <label className="block font-medium">Image</label>
-                <input type="file" onChange={handleImageChange} accept="image/*" />
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
                 {preview && (
                   <img
                     src={preview}
@@ -209,9 +227,20 @@ const Category = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                  disabled={loadingSubmit}
+                  className={`px-4 py-2 rounded ${
+                    loadingSubmit
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700 text-white"
+                  }`}
                 >
-                  {isEditing ? "Update" : "Create"}
+                  {loadingSubmit
+                    ? isEditing
+                      ? "Updating..."
+                      : "Creating..."
+                    : isEditing
+                    ? "Update"
+                    : "Create"}
                 </button>
               </div>
             </form>
