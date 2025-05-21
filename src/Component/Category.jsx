@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const CLOUDINARY_UPLOAD_PRESET = "MyUploads";
-const CLOUDINARY_CLOUD_NAME = "dklysh3ty";
-const CLOUDINARY_API = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
-
 const Category = () => {
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
     name: "",
     description: "",
     group: "",
-    image: null, // This will be the File object
-    imageUrl: "", // This will store the Cloudinary URL after upload
+    image: null,
   });
   const [preview, setPreview] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   useEffect(() => {
     fetchCategories();
@@ -42,7 +36,7 @@ const Category = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setForm((prev) => ({ ...prev, image: file, imageUrl: "" }));
+    setForm((prev) => ({ ...prev, image: file }));
 
     if (file) {
       const reader = new FileReader();
@@ -53,79 +47,44 @@ const Category = () => {
     }
   };
 
-  // Upload image to Cloudinary and get URL
-  const uploadImageToCloudinary = async (imageFile) => {
-    const data = new FormData();
-    data.append("file", imageFile);
-    data.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-
-    try {
-      const res = await axios.post(CLOUDINARY_API, data);
-      return res.data.secure_url; // Return Cloudinary URL
-    } catch (error) {
-      console.error("Cloudinary upload error:", error);
-      return null;
-    }
-  };
-
   const resetForm = () => {
-    setForm({ name: "", description: "", group: "", image: null, imageUrl: "" });
+    setForm({ name: "", description: "", group: "", image: null });
     setPreview("");
     setIsEditing(false);
     setEditingId(null);
     setShowModal(false);
-    setLoadingSubmit(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoadingSubmit(true);
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("description", form.description);
+    formData.append("group", form.group);
 
-    let imageUrl = form.imageUrl;
-
-    // If user uploaded a new image, upload it to Cloudinary
     if (form.image instanceof File) {
-      imageUrl = await uploadImageToCloudinary(form.image);
-      if (!imageUrl) {
-        alert("Image upload failed. Please try again.");
-        setLoadingSubmit(false);
-        return;
-      }
+      formData.append("image", form.image);
     }
 
-    const payload = {
-      name: form.name,
-      description: form.description,
-      group: form.group,
-      image: imageUrl, // Send the Cloudinary URL to backend
-    };
-
     try {
-      let response;
       if (isEditing) {
-        response = await axios.put(
+        await axios.put(
           `https://loginsystembackendecommercesite.onrender.com/api/categories/${editingId}`,
-          payload
-        );
-
-        setCategories((prev) =>
-          prev.map((cat) => (cat._id === editingId ? response.data : cat))
+          formData
         );
         alert("Category updated successfully");
       } else {
-        response = await axios.post(
+        await axios.post(
           "https://loginsystembackendecommercesite.onrender.com/api/categories",
-          payload
+          formData
         );
-        setCategories((prev) => [...prev, response.data]);
         alert("Category added successfully");
       }
 
+      fetchCategories();
       resetForm();
     } catch (error) {
-      console.error("Error submitting form:", error);
       alert("Error submitting form");
-      setLoadingSubmit(false);
     }
   };
 
@@ -135,9 +94,10 @@ const Category = () => {
       description: cat.description,
       group: cat.group || "",
       image: null,
-      imageUrl: cat.image || "",
     });
-    setPreview(cat.image || "");
+    setPreview(
+      `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`
+    );
     setEditingId(cat._id);
     setIsEditing(true);
     setShowModal(true);
@@ -169,6 +129,7 @@ const Category = () => {
     }, {});
   };
 
+  // Get grouped categories object
   const groupedCategories = groupByGroup(categories);
 
   return (
@@ -229,11 +190,7 @@ const Category = () => {
               </div>
               <div className="mb-3">
                 <label className="block font-medium">Image</label>
-                <input
-                  type="file"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                />
+                <input type="file" onChange={handleImageChange} accept="image/*" />
                 {preview && (
                   <img
                     src={preview}
@@ -252,20 +209,9 @@ const Category = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={loadingSubmit}
-                  className={`px-4 py-2 rounded ${
-                    loadingSubmit
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-600 hover:bg-green-700 text-white"
-                  }`}
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                 >
-                  {loadingSubmit
-                    ? isEditing
-                      ? "Updating..."
-                      : "Creating..."
-                    : isEditing
-                    ? "Update"
-                    : "Create"}
+                  {isEditing ? "Update" : "Create"}
                 </button>
               </div>
             </form>
@@ -297,7 +243,7 @@ const Category = () => {
                   <td className="p-3 border border-blue-200">
                     {cat.image ? (
                       <img
-                        src={cat.image}
+                        src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
                         alt={cat.name}
                         className="w-16 h-16 object-cover mx-auto rounded"
                       />

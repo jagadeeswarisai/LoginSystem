@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const CLOUDINARY_UPLOAD_PRESET = 'MyUploads'; // from Cloudinary dashboard
-const CLOUDINARY_CLOUD_NAME = 'dklysh3ty';
-
-const ProductList = () => {
+const Productlist = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     name: '', description: '', price: '', height: '', weight: '',
     length: '', width: '', status: 'Available', tax: '', warehouseLocation: '',
-    category: '', imageUrl: ''
+    category: '', image: null
   });
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
 
   const fetchProducts = async () => {
     const res = await axios.get('https://loginsystembackendecommercesite.onrender.com/api/products');
@@ -36,83 +32,51 @@ const ProductList = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = async e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      // Prepare form data for Cloudinary
-      const data = new FormData();
-      data.append('file', file);
-      data.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-      // Upload image to Cloudinary
-      const res = await axios.post(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        data
-      );
-
-      setFormData(prev => ({ ...prev, imageUrl: res.data.secure_url }));
-    } catch (error) {
-      console.error('Cloudinary upload error:', error);
-      alert('Failed to upload image.');
-    }
-    setUploadingImage(false);
+  const handleImageChange = e => {
+    setFormData(prev => ({ ...prev, image: e.target.files[0] }));
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-
-    if (!formData.imageUrl) {
-      alert('Please upload an image before submitting.');
-      return;
-    }
+    const data = new FormData();
+    Object.entries(formData).forEach(([key, val]) => {
+      data.append(key, val);
+    });
 
     try {
       if (editId) {
-        await axios.put(`https://loginsystembackendecommercesite.onrender.com/api/products/${editId}`, formData);
+        await axios.put(`https://loginsystembackendecommercesite.onrender.com/api/products/${editId}`, data);
       } else {
-        await axios.post('https://loginsystembackendecommercesite.onrender.com/api/products', formData);
+        await axios.post('https://loginsystembackendecommercesite.onrender.com/api/products', data);
       }
       fetchProducts();
-      setFormData({
-        name: '', description: '', price: '', height: '', weight: '',
-        length: '', width: '', status: 'Available', tax: '', warehouseLocation: '',
-        category: '', imageUrl: ''
-      });
+      setFormData({ name: '', description: '', price: '', height: '', weight: '', length: '', width: '', status: 'Available', tax: '', warehouseLocation: '', category: '', image: null });
       setEditId(null);
       setShowModal(false);
     } catch (error) {
       console.error('Error saving product:', error);
-      alert('Failed to save product.');
     }
   };
 
   const handleEdit = product => {
     setEditId(product._id);
-    setFormData({
-      ...product,
-      imageUrl: product.image || ''  // Adjust according to your backend field name for image URL
-    });
+    setFormData({ ...product, image: null });
     setShowModal(true);
   };
 
   const handleDelete = async id => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      await axios.delete(`https://loginsystembackendecommercesite.onrender.com/api/products/${id}`);
-      fetchProducts();
-    }
+    await axios.delete(`https://loginsystembackendecommercesite.onrender.com/api/products/${id}`);
+    fetchProducts();
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 ">
       <button
         onClick={() => {
           setFormData({
             name: '', description: '', price: '', height: '', weight: '',
             length: '', width: '', status: 'Available', tax: '', warehouseLocation: '',
-            category: '', imageUrl: ''
+            category: '', image: null
           });
           setEditId(null);
           setShowModal(true);
@@ -121,67 +85,67 @@ const ProductList = () => {
       >
         Add New Product
       </button>
+    <div className="mt-6 animate-fadeIn">
+  <div className="w-full overflow-x-auto rounded-xl border border-blue-200 shadow-lg transition-all duration-500 ease-in-out hover:shadow-xl">
+    
+    {/* Vertical scroll wrapper with fixed height */}
+    <div className="max-h-[400px] overflow-y-auto">
+      <table className="min-w-[800px] w-full divide-y divide-gray-200 transition-transform duration-500 ease-in-out">
+        <thead className="bg-blue-100 uppercase text-xs sticky top-0 z-10">
+          <tr>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Description</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-blue-200 bg-white">
+          {products.map((product, index) => (
+            <tr
+              key={product._id}
+              className="hover:bg-gray-50 transition duration-300 ease-in-out animate-fadeIn"
+              style={{ animationDelay: `${index * 0.05}s`, animationFillMode: "forwards" }}
+            >
+              <td className="px-4 py-2">
+                {product.image && (
+                  <img
+                    src={`https://loginsystembackendecommercesite.onrender.com/uploads/${product.image}`}
+                    alt={product.name}
+                    className="h-12 w-12 rounded-full object-cover transition-transform duration-300 hover:scale-110"
+                  />
+                )}
+              </td>
+              <td className="px-4 py-2 text-sm text-gray-800">{product.name}</td>
+              <td className="px-4 py-2 text-sm text-gray-600">{product.description}</td>
+              <td className="px-4 py-2 text-sm text-gray-800">₹{product.price}</td>
+              <td className="px-4 py-2 text-sm">{product.status}</td>
+              <td className="px-4 py-2 text-sm">{product.category}</td>
+              <td className="px-4 py-2">
+                <button
+                  onClick={() => handleEdit(product)}
+                  className="bg-yellow-500 text-white px-3 py-1 text-xs rounded mr-2 hover:bg-yellow-600 transition-colors duration-300"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(product._id)}
+                  className="bg-red-600 text-white px-3 py-1 text-xs rounded hover:bg-red-700 transition-colors duration-300"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
-      {/* Table and products listing here (same as your original) */}
-      <div className="mt-6 animate-fadeIn">
-        <div className="w-full overflow-x-auto rounded-xl border border-blue-200 shadow-lg transition-all duration-500 ease-in-out hover:shadow-xl">
-          <div className="max-h-[400px] overflow-y-auto">
-            <table className="min-w-[800px] w-full divide-y divide-gray-200 transition-transform duration-500 ease-in-out">
-              <thead className="bg-blue-100 uppercase text-xs sticky top-0 z-10">
-                <tr>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Description</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-blue-200 bg-white">
-                {products.map((product, index) => (
-                  <tr
-                    key={product._id}
-                    className="hover:bg-gray-50 transition duration-300 ease-in-out animate-fadeIn"
-                    style={{ animationDelay: `${index * 0.05}s`, animationFillMode: "forwards" }}
-                  >
-                    <td className="px-4 py-2">
-                      {product.image ? (
-                        <img
-                          src={product.image} // Assuming your backend stores Cloudinary URL in image field
-                          alt={product.name}
-                          className="h-12 w-12 rounded-full object-cover transition-transform duration-300 hover:scale-110"
-                        />
-                      ) : (
-                        'No Image'
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-800">{product.name}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{product.description}</td>
-                    <td className="px-4 py-2 text-sm text-gray-800">₹{product.price}</td>
-                    <td className="px-4 py-2 text-sm">{product.status}</td>
-                    <td className="px-4 py-2 text-sm">{product.category}</td>
-                    <td className="px-4 py-2">
-                      <button
-                        onClick={() => handleEdit(product)}
-                        className="bg-yellow-500 text-white px-3 py-1 text-xs rounded mr-2 hover:bg-yellow-600 transition-colors duration-300"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product._id)}
-                        className="bg-red-600 text-white px-3 py-1 text-xs rounded hover:bg-red-700 transition-colors duration-300"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+  </div>
+</div>
+
 
       {/* Modal */}
       {showModal && (
@@ -211,32 +175,12 @@ const ProductList = () => {
                 ))}
               </select>
 
-              {/* Image Upload */}
-              <input type="file" accept="image/*" onChange={handleImageChange} className="col-span-2" />
-              {uploadingImage && <p className="col-span-2 text-sm text-gray-500">Uploading image...</p>}
-
-              {/* Preview uploaded image */}
-              {formData.imageUrl && (
-                <img
-                  src={formData.imageUrl}
-                  alt="Preview"
-                  className="col-span-2 h-32 object-contain rounded mt-2"
-                />
-              )}
-
+              <input type="file" onChange={handleImageChange} className="col-span-2" />
               <div className="col-span-2 flex justify-end gap-3 mt-3">
-                <button
-                  type="submit"
-                  disabled={uploadingImage}
-                  className={`px-4 py-2 rounded text-white ${uploadingImage ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
-                >
+                <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
                   {editId ? 'Update' : 'Add'}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => { setShowModal(false); setEditId(null); }}
-                  className="bg-gray-400 text-white px-4 py-2 rounded"
-                >
+                <button type="button" onClick={() => { setShowModal(false); setEditId(null); }} className="bg-gray-400 text-white px-4 py-2 rounded">
                   Close
                 </button>
               </div>
@@ -248,4 +192,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default Productlist;
