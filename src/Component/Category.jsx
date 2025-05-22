@@ -95,9 +95,8 @@ const Category = () => {
       group: cat.group || "",
       image: null,
     });
-    setPreview(
-      `https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`
-    );
+    // IMPORTANT: Here we use direct Cloudinary image URL stored in cat.image
+    setPreview(cat.image || "");
     setEditingId(cat._id);
     setIsEditing(true);
     setShowModal(true);
@@ -190,7 +189,11 @@ const Category = () => {
               </div>
               <div className="mb-3">
                 <label className="block font-medium">Image</label>
-                <input type="file" onChange={handleImageChange} accept="image/*" />
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
                 {preview && (
                   <img
                     src={preview}
@@ -243,7 +246,7 @@ const Category = () => {
                   <td className="p-3 border border-blue-200">
                     {cat.image ? (
                       <img
-                        src={`https://loginsystembackendecommercesite.onrender.com/uploads/${cat.image}`}
+                        src={cat.image}
                         alt={cat.name}
                         className="w-16 h-16 object-cover mx-auto rounded"
                       />
